@@ -1,0 +1,108 @@
+//
+//  CalendarViewModel.swift
+//
+//  Created by : Tomoaki Yagishita on 2022/03/23
+//  © 2022  SmallDeskSoftware
+//
+
+import Foundation
+import SwiftUI
+
+public struct Event: Identifiable {
+    public var id: UUID
+    public var title: String
+    public var start: Date
+    public var end: Date
+    public var color: Color
+
+    public init(_ title: String,_ start: Date,_ end: Date,_ color: Color = .gray.opacity(0.6)) {
+        self.id = UUID()
+        self.title = title
+        self.start = start
+        self.end = end
+        self.color = color
+    }
+    
+    public var startInterval: TimeInterval {
+        start.timeIntervalSinceReferenceDate
+    }
+    public var endInterval: TimeInterval {
+        end.timeIntervalSinceReferenceDate
+    }
+
+    public var midInterval: TimeInterval {
+        return (startInterval + endInterval) / 2.0
+    }
+    public var lengthInMin: TimeInterval {
+        return (endInterval - startInterval) / 60.0
+    }
+}
+
+public class CalendarViewModel: ObservableObject {
+    @Published var startTime: Date
+    @Published var endTime: Date
+    @Published var events:[Event] = []
+    
+    // minus: make events in parallel without any overlap
+    // 0.0 - 1.0: use ratio for event overlapping   ex: 0.5 means middle Event overlap first-half with left-side event, second-half with right-side event
+    // 1.0 <    : use value as width
+    @Published var eventHorizontalOffset: CGFloat // minus means event wll NOT overlap
+    
+    public init(start: Date, end: Date, events: [Event] = [], offset: CGFloat = -1) {
+        self.startTime = start
+        self.endTime = end
+        self.events = events
+        self.eventHorizontalOffset = offset
+    }
+
+    public var startTimeInterval: TimeInterval {
+        startTime.timeIntervalSinceReferenceDate
+    }
+    public var endTimeInterval: TimeInterval {
+        endTime.timeIntervalSinceReferenceDate
+    }
+    
+    var hourArray: [TimeInterval] {
+        return stride(from: startTimeInterval, through: endTimeInterval, by: 60*60).map{$0}
+    }
+}
+
+// MARK: example
+extension CalendarViewModel {
+    static public func example() -> CalendarViewModel {
+        let viewModel = CalendarViewModel(start: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!,
+                                          end: Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!,
+                                          events: [ Event("9:00-10:00",
+                                                          Calendar.current.date(bySettingHour:  9, minute: 0, second: 0, of: Date())!,
+                                                          Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date())!,
+                                                          .red.opacity(0.6)),
+                                                    Event("9:30-10:30",
+                                                          Calendar.current.date(bySettingHour:  9, minute: 30, second: 0, of: Date())!,
+                                                          Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date())!,
+                                                          .blue.opacity(0.6)),
+                                                    Event("9:30-15:30",
+                                                          Calendar.current.date(bySettingHour:  9, minute: 30, second: 0, of: Date())!,
+                                                          Calendar.current.date(bySettingHour: 15, minute: 30, second: 0, of: Date())!,
+                                                          .brown.opacity(0.6)),
+                                                    Event("Event",
+                                                          Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
+                                                          Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
+                                                          .green.opacity(0.6)),])
+        viewModel.eventHorizontalOffset = 0.75
+        return viewModel
+    }
+}
+
+// MARK: formatter
+extension CalendarViewModel {
+    static public func formattedHour(_ interval: TimeInterval) -> String{
+        let date = Date(timeIntervalSinceReferenceDate: interval)
+        let dateComp = Calendar.current.dateComponents([.hour], from: date)
+        return String(format: "%2d:00", dateComp.hour!)
+    }
+    static public func formattedTime(_ interval: TimeInterval) -> String{
+        let date = Date(timeIntervalSinceReferenceDate: interval)
+        let dateComp = Calendar.current.dateComponents([.hour, .minute], from: date)
+        return String(format: "%02d:%02d", dateComp.hour!, dateComp.minute!)
+    }
+}
