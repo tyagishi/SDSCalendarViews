@@ -94,17 +94,11 @@ public class CalendarViewModel: ObservableObject {
     }
     
     public func clearEvents() {
-        DispatchQueue.main.async {
-            self.objectWillChange.send()
-            self.events = []
-        }
+        self.events = []
     }
     
     public func add(_ event: Event) {
-        DispatchQueue.main.async {
-            self.objectWillChange.send()
-            self.events.append(event)
-        }
+        self.events.append(event)
     }
 }
 

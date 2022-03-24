@@ -51,7 +51,6 @@ struct HourBlock: View {
                     }
                 VStack { Divider() }.offset(y: timeHeight * 0.5 * (-1))
             }
-            .padding(0)
             .frame(maxHeight: .infinity, alignment: .top)
             .overlay(alignment: .leading) {
                 ZStack(alignment: .topLeading){
