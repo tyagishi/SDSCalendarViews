@@ -84,20 +84,20 @@ public class CalendarViewModel: ObservableObject {
         endDate.timeIntervalSinceReferenceDate
     }
     
-    var hourArray: [TimeInterval] {
+    nonisolated var hourArray: [TimeInterval] {
         return stride(from: startTimeInterval, through: endTimeInterval, by: CalendarViewModel.secInHour).map{$0}
     }
     
-    public func setStartEnd(_ start: Date,_ end: Date) {
+    @MainActor public func setStartEnd(_ start: Date,_ end: Date) {
         self.startDate = start
         self.endDate = end
     }
     
-    public func clearEvents() {
+    @MainActor public func clearEvents() {
         self.events = []
     }
     
-    public func add(_ event: Event) {
+    @MainActor public func add(_ event: Event) {
         self.events.append(event)
     }
 }
