@@ -143,7 +143,12 @@ extension CalendarViewModel {
 
 // MARK: formatter
 extension CalendarViewModel {
-    static public func formattedHour(_ interval: TimeInterval) -> String{
+    static public func formattedDate(_ interval: TimeInterval) -> String {
+        let date = Date(timeIntervalSinceReferenceDate: interval)
+        let dateComp = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%4d/%02d/%02d", dateComp.year!, dateComp.month!, dateComp.day!)
+    }
+    static public func formattedHour(_ interval: TimeInterval) -> String {
         let date = Date(timeIntervalSinceReferenceDate: interval)
         let dateComp = Calendar.current.dateComponents([.hour], from: date)
         return String(format: "%2d:00", dateComp.hour!)

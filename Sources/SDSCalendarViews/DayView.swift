@@ -9,7 +9,6 @@ import SwiftUI
 import os
 import SDSViewExtension
 import Combine
-import SwiftUIDebugUtil
 
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
