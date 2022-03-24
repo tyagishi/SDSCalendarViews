@@ -48,9 +48,6 @@ struct HourBlock: View {
                 VStack { Divider() }
             }
             .frame(maxHeight: .infinity)
-            .readSize(onChange: { geomProxy in
-                viewSize = geomProxy.size
-            })
             .overlay(alignment: .leading) {
                 HStack {
                     ForEach(viewModel.events.filter({blockHourRange.contains($0.midInterval)})) { event in
@@ -78,6 +75,9 @@ struct HourBlock: View {
                 }
             }
         }
+        .readSize(onChange: { geomProxy in
+            viewSize = geomProxy.size
+        })
     }
 
     var eventWidth: CGFloat {
