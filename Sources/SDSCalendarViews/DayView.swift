@@ -8,6 +8,7 @@
 import SwiftUI
 import os
 import SDSViewExtension
+import Combine
 
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
@@ -30,6 +31,7 @@ struct HourBlock: View {
     let start: TimeInterval
     @State private var viewSize: CGSize = CGSize(width: 10, height: 10)
     @State private var timeWidth: CGFloat = 10
+
     init(_ start: TimeInterval) {
         self.start = start
     }
@@ -69,7 +71,7 @@ struct HourBlock: View {
                 if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
                     HStack(spacing:0) {
                         Rectangle().fill(.clear).frame(width: timeWidth)
-                        NowLine()
+                        NowLine(nowDate: viewModel.now)
                     }
                     .offset(y: nowOffsetY(date: Date(), oneHourHeight: viewSize.height))
                 }
@@ -89,18 +91,22 @@ struct HourBlock: View {
         return viewSize.height / 60.0 * event.lengthInMin
     }
     
-    func baseOffset(_ width: CGFloat) -> CGFloat {
-        if viewModel.eventHorizontalOffset <= 0 {
-            return width
-        } else if viewModel.eventHorizontalOffset <= 1.0 {
-            return width * viewModel.eventHorizontalOffset
+    func calcedColumnWidth(_ columnWidth: CGFloat) -> CGFloat {
+        switch viewModel.eventDisplayMode {
+        case .oneLine:
+            return 0
+        case .sideBySide:
+            return columnWidth
+        case .shiftByRatio(let ratio):
+            return columnWidth * ratio
+        case .shiftByPixel(let pixcel):
+            return pixcel
         }
-        return viewModel.eventHorizontalOffset
     }
     
     func eventOffsetX(event: Event) -> CGFloat {
         if let index = viewModel.events.firstIndex(where: {event.id == $0.id}) {
-            let offset = baseOffset(eventWidth)
+            let offset = calcedColumnWidth(eventWidth)
             return timeWidth + CGFloat(index) * offset
         }
         return timeWidth
@@ -131,12 +137,13 @@ struct HourBlock: View {
 }
 
 struct NowLine: View {
+    var nowDate: Date
     var body: some View {
         HStack {
             VStack {
                 Divider().background(.red)
             }
-            Text(CalendarViewModel.formattedTime(Date().timeIntervalSinceReferenceDate)).foregroundColor(.red).font(.caption)
+            Text(CalendarViewModel.formattedTime(nowDate.timeIntervalSinceReferenceDate)).foregroundColor(.red).font(.caption)
             VStack {
                 Divider().background(.red)
             }

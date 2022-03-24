@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 public struct Event: Identifiable {
@@ -38,21 +39,35 @@ public struct Event: Identifiable {
     }
 }
 
+enum DisplayMode {
+    case oneLine
+    case sideBySide
+    case shiftByRatio(ratio: CGFloat)
+    case shiftByPixel(pixcel: CGFloat)
+}
+
 public class CalendarViewModel: ObservableObject {
     @Published var startTime: Date
     @Published var endTime: Date
     @Published var events:[Event] = []
+    @Published var now: Date
     
-    // minus: make events in parallel without any overlap
-    // 0.0 - 1.0: use ratio for event overlapping   ex: 0.5 means middle Event overlap first-half with left-side event, second-half with right-side event
-    // 1.0 <    : use value as width
-    @Published var eventHorizontalOffset: CGFloat // minus means event wll NOT overlap
+    var timerCancellable: AnyCancellable?
+
+    // strategy how to put events in parallel (might be changed in the future, still under designing)
+    @Published var eventDisplayMode: DisplayMode
     
     public init(start: Date, end: Date, events: [Event] = [], offset: CGFloat = -1) {
         self.startTime = start
         self.endTime = end
         self.events = events
-        self.eventHorizontalOffset = offset
+        self.eventDisplayMode = .sideBySide
+        self.now = Date()
+        timerCancellable = Timer.publish(every: 1, tolerance: 1, on: .main, in: .common, options: nil)
+            .autoconnect()
+            .sink(receiveValue: { newDate in
+                self.now = Date()
+            })
     }
 
     public var startTimeInterval: TimeInterval {
@@ -71,7 +86,7 @@ public class CalendarViewModel: ObservableObject {
 extension CalendarViewModel {
     static public func example() -> CalendarViewModel {
         let viewModel = CalendarViewModel(start: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!,
-                                          end: Calendar.current.date(bySettingHour: 21, minute: 0, second: 0, of: Date())!,
+                                          end: Calendar.current.date(bySettingHour: 22, minute: 59, second: 0, of: Date())!,
                                           events: [ Event("9:00-10:00",
                                                           Calendar.current.date(bySettingHour:  9, minute: 0, second: 0, of: Date())!,
                                                           Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date())!,
@@ -88,7 +103,10 @@ extension CalendarViewModel {
                                                           Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
                                                           Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
                                                           .green.opacity(0.6)),])
-        viewModel.eventHorizontalOffset = 0.75
+        //viewModel.eventDisplayMode = .sideBySide
+        //viewModel.eventDisplayMode = .shiftByRatio(ratio: 0.75)
+        //viewModel.eventDisplayMode = .shiftByPixel(pixcel: 10)
+        viewModel.eventDisplayMode = .oneLine
         return viewModel
     }
 }
