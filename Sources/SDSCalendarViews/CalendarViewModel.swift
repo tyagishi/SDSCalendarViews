@@ -39,7 +39,7 @@ public struct Event: Identifiable {
     }
 }
 
-enum DisplayMode {
+enum AlignMode {
     case oneLine(_ width: CGFloat)
     case sideBySide(_ width: CGFloat)
     case shiftByRatio(_ width: CGFloat, ratio: CGFloat)
@@ -55,13 +55,13 @@ public class CalendarViewModel: ObservableObject {
     var timerCancellable: AnyCancellable?
 
     // strategy how to put events in parallel (might be changed in the future, still under designing)
-    @Published var eventDisplayMode: DisplayMode
+    @Published var eventAlignMode: AlignMode
     
     public init(start: Date, end: Date, events: [Event] = [], offset: CGFloat = -1) {
         self.startTime = start
         self.endTime = end
         self.events = events
-        self.eventDisplayMode = .sideBySide(100)
+        self.eventAlignMode = .sideBySide(100)
         self.now = Date()
         timerCancellable = Timer.publish(every: 1, tolerance: 1, on: .main, in: .common, options: nil)
             .autoconnect()
@@ -103,10 +103,10 @@ extension CalendarViewModel {
                                                           Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
                                                           Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
                                                           .green.opacity(0.6)),])
-        viewModel.eventDisplayMode = .sideBySide(50)
-        viewModel.eventDisplayMode = .shiftByRatio(80, ratio: 0.5)
-        viewModel.eventDisplayMode = .shiftByPixel(100, pixcel: 40)
-        viewModel.eventDisplayMode = .oneLine(250)
+        viewModel.eventAlignMode = .sideBySide(50)
+        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
+        viewModel.eventAlignMode = .shiftByPixel(100, pixcel: 40)
+        viewModel.eventAlignMode = .oneLine(250)
         return viewModel
     }
 }
