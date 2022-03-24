@@ -9,6 +9,7 @@ import SwiftUI
 import os
 import SDSViewExtension
 import Combine
+import SwiftUIDebugUtil
 
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
@@ -31,6 +32,7 @@ struct HourBlock: View {
     let start: TimeInterval
 //    @State private var viewSize: CGSize = CGSize(width: 10, height: 10)
     @State private var timeWidth: CGFloat = 10
+    @State private var timeHeight: CGFloat = 10
     @State private var blockHeight: CGFloat = 10
     
     init(_ start: TimeInterval) {
@@ -43,14 +45,15 @@ struct HourBlock: View {
                     .hidden()
                     .overlay {
                         Text(CalendarViewModel.formattedTime(start))
-                            .offset(y: 5)
                     }
-                    .readSize() { geomProxy in
+                    .readGeom() { geomProxy in
+                        timeHeight = geomProxy.size.height
                         timeWidth = geomProxy.size.width
                     }
-                VStack { Divider() }
+                VStack { Divider() }.offset(y: timeHeight * 0.5 * (-1))
             }
-            .frame(maxHeight: .infinity)
+            .padding(0)
+            .frame(maxHeight: .infinity, alignment: .top)
             .overlay(alignment: .leading) {
                 ZStack(alignment: .topLeading){
                     ForEach(viewModel.events.filter({blockHourRange.contains($0.midInterval)})) { event in
@@ -68,9 +71,9 @@ struct HourBlock: View {
                     }
                 }
             }
-            .readSize(onChange: { geomProxy in
+            .readGeom { geomProxy in
                 blockHeight = geomProxy.size.height
-            })
+            }
             .overlay {
                 if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
                     HStack(spacing:0) {
@@ -126,14 +129,14 @@ struct HourBlock: View {
         let diffInSec = event.midInterval - (start)
         let diffInMin = diffInSec / 60.0
         let diffInDot = diffInMin / 60 * oneHourHeight
-        return diffInDot
+        return diffInDot - oneHourHeight * 0.5
     }
     
     func nowOffsetY(date: Date, oneHourHeight: CGFloat) -> CGFloat {
         let diffInSec = date.timeIntervalSinceReferenceDate - (start)
         let diffInMin = diffInSec / 60.0
         let diffInDot = diffInMin / 60 * oneHourHeight
-        return diffInDot
+        return diffInDot - oneHourHeight * 0.5
     }
     
     var blockHourRange: Range<TimeInterval> {
