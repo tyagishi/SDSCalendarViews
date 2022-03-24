@@ -83,7 +83,16 @@ struct HourBlock: View {
     }
 
     var eventWidth: CGFloat {
-        return (viewSize.width - timeWidth) / CGFloat(viewModel.events.count)
+        switch viewModel.eventDisplayMode {
+        case .oneLine(let width):
+            return width
+        case .sideBySide(let width):
+            return width
+        case .shiftByRatio(let width,_):
+            return width
+        case .shiftByPixel(let width,_):
+            return width
+        }
     }
     
     func eventHeight(_ event: Event) -> CGFloat {
@@ -91,22 +100,22 @@ struct HourBlock: View {
         return viewSize.height / 60.0 * event.lengthInMin
     }
     
-    func calcedColumnWidth(_ columnWidth: CGFloat) -> CGFloat {
+    func columnOffset(_ columnWidth: CGFloat) -> CGFloat {
         switch viewModel.eventDisplayMode {
-        case .oneLine:
+        case .oneLine(let width):
             return 0
-        case .sideBySide:
-            return columnWidth
-        case .shiftByRatio(let ratio):
-            return columnWidth * ratio
-        case .shiftByPixel(let pixcel):
+        case .sideBySide(let width):
+            return width
+        case .shiftByRatio(let width, let ratio):
+            return width * ratio
+        case .shiftByPixel(let width, let pixcel):
             return pixcel
         }
     }
     
     func eventOffsetX(event: Event) -> CGFloat {
         if let index = viewModel.events.firstIndex(where: {event.id == $0.id}) {
-            let offset = calcedColumnWidth(eventWidth)
+            let offset = columnOffset(eventWidth)
             return timeWidth + CGFloat(index) * offset
         }
         return timeWidth

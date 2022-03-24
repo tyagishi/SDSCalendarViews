@@ -40,10 +40,10 @@ public struct Event: Identifiable {
 }
 
 enum DisplayMode {
-    case oneLine
-    case sideBySide
-    case shiftByRatio(ratio: CGFloat)
-    case shiftByPixel(pixcel: CGFloat)
+    case oneLine(_ width: CGFloat)
+    case sideBySide(_ width: CGFloat)
+    case shiftByRatio(_ width: CGFloat, ratio: CGFloat)
+    case shiftByPixel(_ width: CGFloat, pixcel: CGFloat)
 }
 
 public class CalendarViewModel: ObservableObject {
@@ -61,7 +61,7 @@ public class CalendarViewModel: ObservableObject {
         self.startTime = start
         self.endTime = end
         self.events = events
-        self.eventDisplayMode = .sideBySide
+        self.eventDisplayMode = .sideBySide(100)
         self.now = Date()
         timerCancellable = Timer.publish(every: 1, tolerance: 1, on: .main, in: .common, options: nil)
             .autoconnect()
@@ -103,10 +103,10 @@ extension CalendarViewModel {
                                                           Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
                                                           Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
                                                           .green.opacity(0.6)),])
-        //viewModel.eventDisplayMode = .sideBySide
-        //viewModel.eventDisplayMode = .shiftByRatio(ratio: 0.75)
-        //viewModel.eventDisplayMode = .shiftByPixel(pixcel: 10)
-        viewModel.eventDisplayMode = .oneLine
+        viewModel.eventDisplayMode = .sideBySide(50)
+        viewModel.eventDisplayMode = .shiftByRatio(80, ratio: 0.5)
+        viewModel.eventDisplayMode = .shiftByPixel(100, pixcel: 40)
+        viewModel.eventDisplayMode = .oneLine(250)
         return viewModel
     }
 }
