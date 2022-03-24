@@ -29,9 +29,10 @@ struct HourBlock: View {
     @EnvironmentObject var viewModel: CalendarViewModel
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "DayView.HourBlock")
     let start: TimeInterval
-    @State private var viewSize: CGSize = CGSize(width: 10, height: 10)
+//    @State private var viewSize: CGSize = CGSize(width: 10, height: 10)
     @State private var timeWidth: CGFloat = 10
-
+    @State private var blockHeight: CGFloat = 10
+    
     init(_ start: TimeInterval) {
         self.start = start
     }
@@ -62,26 +63,26 @@ struct HourBlock: View {
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                             }
                             .offset(x: eventOffsetX(event: event),
-                                    y: eventOffsetY(event: event, oneHourHeight: viewSize.height))
+                                    y: eventOffsetY(event: event, oneHourHeight: blockHeight))
                             .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                     }
                 }
-            }
-            .overlay {
-                if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
-                    HStack(spacing:0) {
-                        Rectangle().fill(.clear).frame(width: timeWidth)
-                        NowLine(nowDate: viewModel.now)
+                .overlay {
+                    if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
+                        HStack(spacing:0) {
+                            Rectangle().fill(.clear).frame(width: timeWidth)
+                            NowLine(nowDate: viewModel.now)
+                        }
+                        .offset(y: nowOffsetY(date: Date(), oneHourHeight: blockHeight))
                     }
-                    .offset(y: nowOffsetY(date: Date(), oneHourHeight: viewSize.height))
                 }
             }
+            .readSize(onChange: { geomProxy in
+                blockHeight = geomProxy.size.height
+            })
         }
-        .readSize(onChange: { geomProxy in
-            viewSize = geomProxy.size
-        })
     }
-
+    
     var eventWidth: CGFloat {
         switch viewModel.eventAlignMode {
         case .oneLine(let width):
@@ -97,7 +98,7 @@ struct HourBlock: View {
     
     func eventHeight(_ event: Event) -> CGFloat {
         //logger.log(level: .debug, "height for \(event.lengthInMin) is \((viewSize.height) / 60.0 * event.lengthInMin)  hourHeight is \(viewSize.height)")
-        return viewSize.height / 60.0 * event.lengthInMin
+        return blockHeight / 60.0 * event.lengthInMin
     }
     
     func columnOffset(_ columnWidth: CGFloat) -> CGFloat {
@@ -120,21 +121,21 @@ struct HourBlock: View {
         }
         return timeWidth
     }
-
+    
     func eventOffsetY(event: Event, oneHourHeight: CGFloat) -> CGFloat {
         let diffInSec = event.midInterval - (start)
         let diffInMin = diffInSec / 60.0
         let diffInDot = diffInMin / 60 * oneHourHeight
         return diffInDot
     }
-
+    
     func nowOffsetY(date: Date, oneHourHeight: CGFloat) -> CGFloat {
         let diffInSec = date.timeIntervalSinceReferenceDate - (start)
         let diffInMin = diffInSec / 60.0
         let diffInDot = diffInMin / 60 * oneHourHeight
         return diffInDot
     }
-
+    
     var blockHourRange: Range<TimeInterval> {
         return start..<oneHourLater
     }

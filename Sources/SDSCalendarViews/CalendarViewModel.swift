@@ -34,6 +34,9 @@ public struct Event: Identifiable {
     public var midInterval: TimeInterval {
         return (startInterval + endInterval) / 2.0
     }
+    public var length: TimeInterval {
+        return (endInterval - startInterval)
+    }
     public var lengthInMin: TimeInterval {
         return (endInterval - startInterval) / 60.0
     }
@@ -53,6 +56,7 @@ public class CalendarViewModel: ObservableObject {
     @Published var now: Date
     
     var timerCancellable: AnyCancellable?
+    public var anyCancellables: Set<AnyCancellable> = Set()
 
     // strategy how to put events in parallel (might be changed in the future, still under designing)
     @Published public var eventAlignMode: AlignMode
@@ -84,6 +88,13 @@ public class CalendarViewModel: ObservableObject {
     public func setStartEnd(_ start: Date,_ end: Date) {
         self.startTime = start
         self.endTime = end
+    }
+    
+    public func clearEvents() {
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+            self.events = []
+        }
     }
     
     public func add(_ event: Event) {
@@ -141,5 +152,10 @@ extension CalendarViewModel {
         let date = Date(timeIntervalSinceReferenceDate: interval)
         let dateComp = Calendar.current.dateComponents([.hour, .minute], from: date)
         return String(format: "%02d:%02d", dateComp.hour!, dateComp.minute!)
+    }
+    static public func formattedLength(_ interval: TimeInterval) -> String {
+        let hour = Int(interval / 60.0 / 60.0)
+        let min  = Int((interval - (Double(hour) * 60.0 * 60.0)) / 60.0)
+        return String(format: "%02d:%02d", hour, min)
     }
 }
