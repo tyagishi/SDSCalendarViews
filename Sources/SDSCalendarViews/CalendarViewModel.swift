@@ -37,9 +37,6 @@ public struct Event: Identifiable {
     public var length: TimeInterval {
         return (endInterval - startInterval)
     }
-    public var lengthInMin: TimeInterval {
-        return (endInterval - startInterval) / 60.0
-    }
 }
 
 public enum AlignMode {
@@ -49,9 +46,15 @@ public enum AlignMode {
     case shiftByPixel(_ width: CGFloat, pixcel: CGFloat)
 }
 
+public extension CalendarViewModel {
+    static let secInMin: CGFloat = 60.0
+    static let secInHour: CGFloat = 60.0 * 60.0
+    static let secInDay: CGFloat = 60.0 * 60.0 * 24.0
+}
+
 public class CalendarViewModel: ObservableObject {
-    @Published public private(set) var startTime: Date
-    @Published public private(set) var endTime: Date
+    @Published public private(set) var startDate: Date
+    @Published public private(set) var endDate: Date
     @Published public private(set) var events:[Event] = []
     @Published var now: Date
     
@@ -62,8 +65,8 @@ public class CalendarViewModel: ObservableObject {
     @Published public var eventAlignMode: AlignMode
     
     public init(start: Date, end: Date, events: [Event] = []) {
-        self.startTime = start
-        self.endTime = end
+        self.startDate = start
+        self.endDate = end
         self.events = events
         self.eventAlignMode = .sideBySide(100)
         self.now = Date()
@@ -75,19 +78,19 @@ public class CalendarViewModel: ObservableObject {
     }
 
     public var startTimeInterval: TimeInterval {
-        startTime.timeIntervalSinceReferenceDate
+        startDate.timeIntervalSinceReferenceDate
     }
     public var endTimeInterval: TimeInterval {
-        endTime.timeIntervalSinceReferenceDate
+        endDate.timeIntervalSinceReferenceDate
     }
     
     var hourArray: [TimeInterval] {
-        return stride(from: startTimeInterval, through: endTimeInterval, by: 60*60).map{$0}
+        return stride(from: startTimeInterval, through: endTimeInterval, by: CalendarViewModel.secInHour).map{$0}
     }
     
     public func setStartEnd(_ start: Date,_ end: Date) {
-        self.startTime = start
-        self.endTime = end
+        self.startDate = start
+        self.endDate = end
     }
     
     public func clearEvents() {
@@ -134,7 +137,7 @@ extension CalendarViewModel {
     }
     static public func emptyExample(_ date: Date) -> CalendarViewModel {
         let am8 = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: date)!
-        let pm10 = Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: date)!
+        let pm10 = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: date)!
         let calViewModel = CalendarViewModel(start: am8, end: pm10)
         calViewModel.eventAlignMode = .oneLine(100)
         return calViewModel
@@ -159,8 +162,8 @@ extension CalendarViewModel {
         return String(format: "%02d:%02d", dateComp.hour!, dateComp.minute!)
     }
     static public func formattedLength(_ interval: TimeInterval) -> String {
-        let hour = Int(interval / 60.0 / 60.0)
-        let min  = Int((interval - (Double(hour) * 60.0 * 60.0)) / 60.0)
+        let hour = Int(interval / CalendarViewModel.secInHour)
+        let min = (interval - Double(hour) * CalendarViewModel.secInHour ) / CalendarViewModel.secInMin
         return String(format: "%02d:%02d", hour, min)
     }
 }
