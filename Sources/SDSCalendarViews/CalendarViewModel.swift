@@ -136,7 +136,7 @@ extension CalendarViewModel {
         let am8 = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: date)!
         let pm10 = Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: date)!
         let calViewModel = CalendarViewModel(start: am8, end: pm10)
-        calViewModel.eventAlignMode = .oneLine(200)
+        calViewModel.eventAlignMode = .oneLine(100)
         return calViewModel
     }
 }
