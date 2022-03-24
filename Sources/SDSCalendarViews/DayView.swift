@@ -67,19 +67,19 @@ struct HourBlock: View {
                             .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                     }
                 }
-                .overlay {
-                    if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
-                        HStack(spacing:0) {
-                            Rectangle().fill(.clear).frame(width: timeWidth)
-                            NowLine(nowDate: viewModel.now)
-                        }
-                        .offset(y: nowOffsetY(date: Date(), oneHourHeight: blockHeight))
-                    }
-                }
             }
             .readSize(onChange: { geomProxy in
                 blockHeight = geomProxy.size.height
             })
+            .overlay {
+                if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
+                    HStack(spacing:0) {
+                        Rectangle().fill(.clear).frame(width: timeWidth)
+                        NowLine(nowDate: viewModel.now)
+                    }
+                    .offset(y: nowOffsetY(date: Date(), oneHourHeight: blockHeight))
+                }
+            }
         }
     }
     
