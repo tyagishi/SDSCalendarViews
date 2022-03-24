@@ -51,7 +51,7 @@ struct HourBlock: View {
             }
             .frame(maxHeight: .infinity)
             .overlay(alignment: .leading) {
-                HStack {
+                ZStack(alignment: .topLeading){
                     ForEach(viewModel.events.filter({blockHourRange.contains($0.midInterval)})) { event in
                         RoundedRectangle(cornerRadius: 3).fill(event.color)
                             .frame(width: eventWidth, height:  eventHeight(event))

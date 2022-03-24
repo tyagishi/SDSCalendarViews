@@ -39,7 +39,7 @@ public struct Event: Identifiable {
     }
 }
 
-enum AlignMode {
+public enum AlignMode {
     case oneLine(_ width: CGFloat)
     case sideBySide(_ width: CGFloat)
     case shiftByRatio(_ width: CGFloat, ratio: CGFloat)
@@ -47,17 +47,17 @@ enum AlignMode {
 }
 
 public class CalendarViewModel: ObservableObject {
-    @Published var startTime: Date
-    @Published var endTime: Date
-    @Published var events:[Event] = []
+    @Published public private(set) var startTime: Date
+    @Published public private(set) var endTime: Date
+    @Published public private(set) var events:[Event] = []
     @Published var now: Date
     
     var timerCancellable: AnyCancellable?
 
     // strategy how to put events in parallel (might be changed in the future, still under designing)
-    @Published var eventAlignMode: AlignMode
+    @Published public var eventAlignMode: AlignMode
     
-    public init(start: Date, end: Date, events: [Event] = [], offset: CGFloat = -1) {
+    public init(start: Date, end: Date, events: [Event] = []) {
         self.startTime = start
         self.endTime = end
         self.events = events
@@ -79,6 +79,18 @@ public class CalendarViewModel: ObservableObject {
     
     var hourArray: [TimeInterval] {
         return stride(from: startTimeInterval, through: endTimeInterval, by: 60*60).map{$0}
+    }
+    
+    public func setStartEnd(_ start: Date,_ end: Date) {
+        self.startTime = start
+        self.endTime = end
+    }
+    
+    public func add(_ event: Event) {
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+            self.events.append(event)
+        }
     }
 }
 
@@ -104,10 +116,17 @@ extension CalendarViewModel {
                                                           Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
                                                           .green.opacity(0.6)),])
         viewModel.eventAlignMode = .sideBySide(50)
-        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
-        viewModel.eventAlignMode = .shiftByPixel(100, pixcel: 40)
-        viewModel.eventAlignMode = .oneLine(250)
+//        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
+//        viewModel.eventAlignMode = .shiftByPixel(100, pixcel: 40)
+//        viewModel.eventAlignMode = .oneLine(250)
         return viewModel
+    }
+    static public func emptyExample(_ date: Date) -> CalendarViewModel {
+        let am8 = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: date)!
+        let pm10 = Calendar.current.date(bySettingHour: 20, minute: 0, second: 0, of: date)!
+        let calViewModel = CalendarViewModel(start: am8, end: pm10)
+        calViewModel.eventAlignMode = .oneLine(200)
+        return calViewModel
     }
 }
 
