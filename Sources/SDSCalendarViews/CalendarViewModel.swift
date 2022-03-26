@@ -157,7 +157,7 @@ extension CalendarViewModel {
     }
     static public func formattedLength(_ interval: TimeInterval) -> String {
         let hour = Int(interval / CalendarViewModel.secInHour)
-        let min = (interval - Double(hour) * CalendarViewModel.secInHour ) / CalendarViewModel.secInMin
+        let min = Int( (interval - Double(hour) * CalendarViewModel.secInHour ) / CalendarViewModel.secInMin)
         return String(format: "%02d:%02d", hour, min)
     }
 }
