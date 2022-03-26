@@ -20,6 +20,7 @@ public struct DayView: View {
             ForEach(viewModel.hourArray, id: \.self) { hour in
                 HourBlock(hour)
                     .environmentObject(viewModel)
+                    .id(CalendarViewModel.formattedHour(hour))
             }
         }
     }
