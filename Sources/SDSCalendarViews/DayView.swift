@@ -76,12 +76,12 @@ struct HourBlock: View {
             .overlay {
                 if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
                     HStack(spacing:0) {
-                        Rectangle().fill(.clear).frame(width: timeWidth)
                         NowLine(nowDate: viewModel.now)
                     }
                     .offset(y: offsetY(Date().timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
                 }
             }
+            .background(Color.gray.opacity(0.1))
         }
     }
     
@@ -143,9 +143,6 @@ struct NowLine: View {
     var nowDate: Date
     var body: some View {
         HStack {
-            VStack {
-                Divider().background(.red)
-            }
             Text(CalendarViewModel.formattedTime(nowDate.timeIntervalSinceReferenceDate)).foregroundColor(.red).font(.caption)
             VStack {
                 Divider().background(.red)
