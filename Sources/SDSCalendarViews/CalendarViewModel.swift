@@ -66,6 +66,9 @@ public extension CalendarViewModel {
     static func todayAt(_ hour: Int) -> Date {
         return Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date())!
     }
+    static func todayAt(_ hour: Int,_ minute: Int) -> Date {
+        return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
+    }
 }
 
 public class CalendarViewModel: ObservableObject {
@@ -104,6 +107,7 @@ public class CalendarViewModel: ObservableObject {
     }
     
     @MainActor public func add(_ event: Event) async {
+        objectWillChange.send()
         if let firstIndex = events.firstIndex(where: {$0.id == event.id}) {
             // already existing event
             events[firstIndex] = event
