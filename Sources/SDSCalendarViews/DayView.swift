@@ -12,13 +12,15 @@ import Combine
 
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
-    public init(_ viewModel: CalendarViewModel) {
+    let now: Date
+    public init(_ viewModel: CalendarViewModel, now: Date){
         self.viewModel = viewModel
+        self.now = now
     }
     public var body: some View {
         VStack(spacing:0) {
             ForEach(viewModel.hourArray, id: \.self) { hour in
-                HourBlock(hour)
+                HourBlock(hour, now)
                     .environmentObject(viewModel)
                     .id(CalendarViewModel.formattedHour(hour))
             }
@@ -30,14 +32,16 @@ struct HourBlock: View {
     @EnvironmentObject var viewModel: CalendarViewModel
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "DayView.HourBlock")
     let blockStartInterval: TimeInterval
+    let now: Date
 
     @State private var timeWidth: CGFloat = 10
     @State private var timeHeight: CGFloat = 10
     @State private var blockHeight: CGFloat = 10
     @State private var eventsWidth: CGFloat = 10
     
-    init(_ start: TimeInterval) {
+    init(_ start: TimeInterval,_ now: Date) {
         self.blockStartInterval = start
+        self.now = now
     }
     var body: some View {
         ZStack {
@@ -76,11 +80,11 @@ struct HourBlock: View {
                 eventsWidth = geomProxy.size.width - timeWidth
             }
             .overlay {
-                if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
+                if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
                     HStack(spacing:0) {
-                        NowLine(nowDate: viewModel.now)
+                        NowLine(nowDate: now)
                     }
-                    .offset(y: offsetY(Date().timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
+                    .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
                 }
             }
             .background(Color.gray.opacity(0.1))
@@ -153,6 +157,6 @@ struct NowLine: View {
 
 struct DayView_Previews: PreviewProvider {
     static var previews: some View {
-        DayView(CalendarViewModel.example())
+        DayView(CalendarViewModel.example(), now: Date())
     }
 }
