@@ -37,6 +37,11 @@ public struct Event: Identifiable {
     public var length: TimeInterval {
         return (endInterval - startInterval)
     }
+    
+    public func eventContainDate(_ date: Date) -> Bool {
+        let range = ClosedRange(uncheckedBounds: (start,end))
+        return range.contains(date)
+    }
 }
 
 public enum EventWidth {
