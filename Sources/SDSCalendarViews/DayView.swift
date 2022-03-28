@@ -34,6 +34,7 @@ struct HourBlock: View {
     @State private var timeWidth: CGFloat = 10
     @State private var timeHeight: CGFloat = 10
     @State private var blockHeight: CGFloat = 10
+    @State private var eventsWidth: CGFloat = 10
     
     init(_ start: TimeInterval) {
         self.blockStartInterval = start
@@ -57,14 +58,14 @@ struct HourBlock: View {
                 ZStack(alignment: .topLeading){
                     ForEach(viewModel.events.filter({blockHourRange.contains($0.midInterval)})) { event in
                         RoundedRectangle(cornerRadius: 3).fill(event.color)
-                            .frame(width: eventWidth, height:  eventHeight(event))
+                            .frame(width: eventWidth(eventsWidth), height:  eventHeight(event))
                             .overlay{
                                 Text(event.title)
                                     .font(.footnote)
                                     .padding(2)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                             }
-                            .offset(x: eventOffsetX(event: event),
+                            .offset(x: eventOffsetX(event: event, eventsWidth),
                                     y: offsetY(event.midInterval - blockStartInterval, oneHourHeight: blockHeight))
                             .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                     }
@@ -72,6 +73,7 @@ struct HourBlock: View {
             }
             .readGeom { geomProxy in
                 blockHeight = geomProxy.size.height
+                eventsWidth = geomProxy.size.width - timeWidth
             }
             .overlay {
                 if blockHourRange.contains(Date().timeIntervalSinceReferenceDate) {
@@ -85,12 +87,12 @@ struct HourBlock: View {
         }
     }
     
-    var eventWidth: CGFloat {
+    func eventWidth(_ columnWidth: CGFloat) -> CGFloat {
         switch viewModel.layoutMode.eventWidth {
         case .fixed(let width):
             return width
         case .ratio(let ratio):
-            return 100
+            return ratio * columnWidth
         }
     }
     
@@ -100,7 +102,7 @@ struct HourBlock: View {
     }
     
     func columnOffset(_ columnWidth: CGFloat) -> CGFloat {
-        let refWidth = eventWidth
+        let refWidth = eventWidth(columnWidth)
         switch viewModel.layoutMode.alignMode {
         case .oneLine:
             return 0
@@ -113,9 +115,9 @@ struct HourBlock: View {
         }
     }
     
-    func eventOffsetX(event: Event) -> CGFloat {
+    func eventOffsetX(event: Event,_ columnWidth: CGFloat) -> CGFloat {
         if let index = viewModel.events.firstIndex(where: {event.id == $0.id}) {
-            let offset = columnOffset(eventWidth)
+            let offset = columnOffset(eventWidth(columnWidth))
             return timeWidth + CGFloat(index) * offset
         }
         return timeWidth
