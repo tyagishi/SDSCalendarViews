@@ -50,6 +50,10 @@ public extension CalendarViewModel {
     static let secInMin: CGFloat = 60.0
     static let secInHour: CGFloat = 60.0 * 60.0
     static let secInDay: CGFloat = 60.0 * 60.0 * 24.0
+    
+    static func todayAt(_ hour: Int) -> Date {
+        return Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date())!
+    }
 }
 
 public class CalendarViewModel: ObservableObject {
