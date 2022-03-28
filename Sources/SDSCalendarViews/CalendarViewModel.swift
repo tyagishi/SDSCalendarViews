@@ -107,7 +107,6 @@ public class CalendarViewModel: ObservableObject {
     }
     
     @MainActor public func add(_ event: Event) async {
-        objectWillChange.send()
         if let firstIndex = events.firstIndex(where: {$0.id == event.id}) {
             // already existing event
             events[firstIndex] = event
