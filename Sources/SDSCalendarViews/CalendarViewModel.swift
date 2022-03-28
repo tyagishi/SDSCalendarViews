@@ -39,13 +39,20 @@ public struct Event: Identifiable {
     }
 }
 
-public enum AlignMode {
-    case oneLine(_ width: CGFloat)
-    case sideBySide(_ width: CGFloat)
-    case shiftByRatio(_ width: CGFloat, ratio: CGFloat)
-    case shiftByPixel(_ width: CGFloat, pixcel: CGFloat)
+public enum EventWidth {
+    case fixed(_ width: CGFloat)
+    case ratio(_ ratio: CGFloat) // should be in (0,1)
 }
 
+public enum AlignMode {
+    case oneLine
+    case sideBySide
+    case shiftByRatio(_ratio: CGFloat)
+    case shiftByPixel(_ pixcel: CGFloat)
+}
+
+public typealias LayoutMode = (eventWidth: EventWidth, alignMode: AlignMode)
+    
 public extension CalendarViewModel {
     static let secInMin: CGFloat = 60.0
     static let secInHour: CGFloat = 60.0 * 60.0
@@ -66,13 +73,13 @@ public class CalendarViewModel: ObservableObject {
     public var anyCancellables: Set<AnyCancellable> = Set()
 
     // strategy how to put events in parallel (might be changed in the future, still under designing)
-    @Published public var eventAlignMode: AlignMode
+    @Published public var layoutMode: LayoutMode// eventAlignMode: AlignMode
     
-    public init(start: Date, end: Date, events: [Event] = []) {
+    public init(start: Date, end: Date, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
         self.startDate = start
         self.endDate = end
         self.events = events
-        self.eventAlignMode = .sideBySide(100)
+        self.layoutMode = layoutMode
         self.now = Date()
         timerCancellable = Timer.publish(every: 1, tolerance: 1, on: .main, in: .common, options: nil)
             .autoconnect()
@@ -127,7 +134,7 @@ extension CalendarViewModel {
                                                           Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
                                                           Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
                                                           .green.opacity(0.6)),])
-        viewModel.eventAlignMode = .sideBySide(50)
+        viewModel.layoutMode = (.fixed(50), .sideBySide)
 //        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
 //        viewModel.eventAlignMode = .shiftByPixel(100, pixcel: 40)
 //        viewModel.eventAlignMode = .oneLine(250)
@@ -137,7 +144,7 @@ extension CalendarViewModel {
         let am8 = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: date)!
         let pm10 = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: date)!
         let calViewModel = CalendarViewModel(start: am8, end: pm10)
-        calViewModel.eventAlignMode = .oneLine(100)
+        calViewModel.layoutMode = (.fixed(100), .oneLine)
         return calViewModel
     }
 }

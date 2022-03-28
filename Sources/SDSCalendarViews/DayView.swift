@@ -86,15 +86,11 @@ struct HourBlock: View {
     }
     
     var eventWidth: CGFloat {
-        switch viewModel.eventAlignMode {
-        case .oneLine(let width):
+        switch viewModel.layoutMode.eventWidth {
+        case .fixed(let width):
             return width
-        case .sideBySide(let width):
-            return width
-        case .shiftByRatio(let width,_):
-            return width
-        case .shiftByPixel(let width,_):
-            return width
+        case .ratio(let ratio):
+            return 100
         }
     }
     
@@ -104,14 +100,15 @@ struct HourBlock: View {
     }
     
     func columnOffset(_ columnWidth: CGFloat) -> CGFloat {
-        switch viewModel.eventAlignMode {
-        case .oneLine(_):
+        let refWidth = eventWidth
+        switch viewModel.layoutMode.alignMode {
+        case .oneLine:
             return 0
-        case .sideBySide(let width):
-            return width
-        case .shiftByRatio(let width, let ratio):
-            return width * ratio
-        case .shiftByPixel(_, let pixcel):
+        case .sideBySide:
+            return refWidth
+        case .shiftByRatio(let ratio):
+            return refWidth * ratio
+        case .shiftByPixel(let pixcel):
             return pixcel
         }
     }
