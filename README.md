@@ -13,7 +13,7 @@ view collection for Calendar
 View for calendar event in one day
 
 ### Screenshot
-coming soon
+![text](https://user-images.githubusercontent.com/6419800/160526105-08385b6e-95ab-40b4-af52-2d9ea71d7ffa.png)
 
 ### Usage
 use together with CalendarViewModel
