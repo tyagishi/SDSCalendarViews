@@ -41,4 +41,22 @@ struct ContentView: View {
 
 ```
 
+### ViewModel
+```
+public class CalendarViewModel: ObservableObject {
+    @Published public private(set) var startDate: Date
+    @Published public private(set) var endDate: Date
+    @Published public private(set) var events:[Event] = []
+    ...
+}
+public struct Event: Identifiable {
+    public var id: String // store calendarItemIdentifier in case of EKEvent, otherwise UUID().uuidString
+    public var title: String
+    public var start: Date
+    public var end: Date
+    public var color: Color
+}
+```
+    
+
 
