@@ -44,18 +44,33 @@ public struct Event: Identifiable {
     }
 }
 
+/// strategy for deciding event width
 public enum EventWidth {
+    /// fixed width
+    ///
+    /// use given width for event width
     case fixed(_ width: CGFloat)
+    /// use ratio from whole width which can be used for calendar
+    ///
+    /// ex: 0.5 means one event will occupy 50% of calendar width
     case ratio(_ ratio: CGFloat) // should be in (0,1)
 }
 
+/// strategy for putting events on calendar
+///
+/// decide how to put events on calendar view
 public enum AlignMode {
+    /// put all events along one vertical line
     case oneLine
+    /// put events side by side
     case sideBySide
-    case shiftByRatio(_ratio: CGFloat)
+    /// put events with shifting in horizontal direction with ratio of event width
+    case shiftByRatio(_ ratio: CGFloat)
+    /// put events with shifting in horizontal direction with specified pixel
     case shiftByPixel(_ pixcel: CGFloat)
 }
 
+/// layout strategy for putting events on calendar
 public typealias LayoutMode = (eventWidth: EventWidth, alignMode: AlignMode)
     
 public extension CalendarViewModel {
@@ -71,14 +86,18 @@ public extension CalendarViewModel {
     }
 }
 
+/// ViewModel for DayView
 public class CalendarViewModel: ObservableObject {
+    /// start date of view covers
     @Published public private(set) var startDate: Date
+    /// end date of view covers
     @Published public private(set) var endDate: Date
+    /// events which will be shown on view
     @Published public private(set) var events:[Event] = []
     
-    // strategy how to put events in parallel (might be changed in the future, still under designing)
+    /// strategy how to put events in parallel (might be changed in the future, still under designing)
     public let layoutMode: LayoutMode// eventAlignMode: AlignMode
-    
+
     public init(start: Date, end: Date, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
         self.startDate = start
         self.endDate = end
