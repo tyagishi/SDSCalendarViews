@@ -97,7 +97,7 @@ public class CalendarViewModel: ObservableObject {
         return stride(from: startTimeInterval, through: endTimeInterval, by: CalendarViewModel.secInHour).map{$0}
     }
     
-    public func setStartEnd(_ start: Date,_ end: Date) {
+    @MainActor public func setStartEnd(_ start: Date,_ end: Date) {
         self.startDate = start
         self.endDate = end
     }
@@ -119,24 +119,15 @@ public class CalendarViewModel: ObservableObject {
 // MARK: example
 extension CalendarViewModel {
     static public func example() -> CalendarViewModel {
-        let layoutMode = (EventWidth.fixed(50), AlignMode.sideBySide)
-        let viewModel = CalendarViewModel(start: Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: Date())!,
-                                          end: Calendar.current.date(bySettingHour: 22, minute: 59, second: 0, of: Date())!,
-                                          events: [ Event(title: "9:00-10:00",
-                                                          Calendar.current.date(bySettingHour:  9, minute: 0, second: 0, of: Date())!,
-                                                          Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date())!,
+        let layoutMode = (EventWidth.ratio(0.8), AlignMode.oneLine)
+        let viewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59),
+                                          events: [ Event(title: "Daily", Self.todayAt(9, 0), Self.todayAt(10,0),
                                                           .red.opacity(0.6)),
-                                                    Event(title: "9:30-10:30",
-                                                          Calendar.current.date(bySettingHour:  9, minute: 30, second: 0, of: Date())!,
-                                                          Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date())!,
+                                                    Event(title: "Design", Self.todayAt(10, 30), Self.todayAt(11, 15),
                                                           .blue.opacity(0.6)),
-                                                    Event(title: "9:30-15:30",
-                                                          Calendar.current.date(bySettingHour:  9, minute: 30, second: 0, of: Date())!,
-                                                          Calendar.current.date(bySettingHour: 15, minute: 30, second: 0, of: Date())!,
+                                                    Event(title: "Lunch", Self.todayAt(12, 30), Self.todayAt(14),
                                                           .brown.opacity(0.6)),
-                                                    Event(title: "Event",
-                                                          Calendar.current.date(bySettingHour: 10, minute: 15, second: 0, of: Date())!,
-                                                          Calendar.current.date(bySettingHour: 21, minute: 45, second: 0, of: Date())!,
+                                                    Event(title: "Meeting", Self.todayAt(15, 30), Self.todayAt(18, 45),
                                                           .green.opacity(0.6)),], layoutMode: layoutMode)
 
 //        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
@@ -146,9 +137,7 @@ extension CalendarViewModel {
     }
     static public func emptyExample(_ date: Date) -> CalendarViewModel {
         let layoutMode = (EventWidth.fixed(100), AlignMode.oneLine)
-        let am8 = Calendar.current.date(bySettingHour: 8, minute: 0, second: 0, of: date)!
-        let pm10 = Calendar.current.date(bySettingHour: 22, minute: 0, second: 0, of: date)!
-        let calViewModel = CalendarViewModel(start: am8, end: pm10, layoutMode: layoutMode)
+        let calViewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59), layoutMode: layoutMode)
         return calViewModel
     }
 }
