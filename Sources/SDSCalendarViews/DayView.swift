@@ -13,12 +13,12 @@ import Combine
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let now: Date
-    public init(_ viewModel: CalendarViewModel, now: Date){
+    public init( _ viewModel: CalendarViewModel, now: Date) {
         self.viewModel = viewModel
         self.now = now
     }
     public var body: some View {
-        VStack(spacing:0) {
+        VStack(spacing: 0) {
             ForEach(viewModel.hourArray, id: \.self) { hour in
                 HourBlock(hour, now)
                     .environmentObject(viewModel)
@@ -38,20 +38,21 @@ struct HourBlock: View {
     @State private var timeHeight: CGFloat = 10
     @State private var blockHeight: CGFloat = 10
     @State private var eventsWidth: CGFloat = 10
-    
-    init(_ start: TimeInterval,_ now: Date) {
+
+    init(_ start: TimeInterval, _ now: Date) {
         self.blockStartInterval = start
         self.now = now
     }
     var body: some View {
+        // swiftlint:disable closure_body_length
         ZStack {
-            HStack(spacing:0) {
+            HStack(spacing: 0) {
                 Text("00:00")
                     .hidden()
                     .overlay {
                         Text(CalendarViewModel.formattedTime(blockStartInterval))
                     }
-                    .readGeom() { geomProxy in
+                    .readGeom { geomProxy in
                         timeHeight = geomProxy.size.height
                         timeWidth = geomProxy.size.width
                     }
@@ -59,11 +60,11 @@ struct HourBlock: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .overlay(alignment: .leading) {
-                ZStack(alignment: .topLeading){
-                    ForEach(viewModel.events.filter({blockHourRange.contains($0.midInterval)})) { event in
+                ZStack(alignment: .topLeading) {
+                    ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
                         RoundedRectangle(cornerRadius: 3).fill(event.color)
-                            .frame(width: eventWidth(eventsWidth), height:  eventHeight(event))
-                            .overlay{
+                            .frame(width: eventWidth(eventsWidth), height: eventHeight(event))
+                            .overlay {
                                 Text(event.title)
                                     .font(.footnote)
                                     .padding(2)
@@ -81,7 +82,7 @@ struct HourBlock: View {
             }
             .overlay {
                 if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
-                    HStack(spacing:0) {
+                    HStack(spacing: 0) {
                         NowLine(nowDate: now)
                     }
                     .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
@@ -89,8 +90,9 @@ struct HourBlock: View {
             }
             .background(Color.gray.opacity(0.1))
         }
+        // swiftlint:enable closure_body_length
     }
-    
+
     func eventWidth(_ columnWidth: CGFloat) -> CGFloat {
         switch viewModel.layoutMode.eventWidth {
         case .fixed(let width):
@@ -99,12 +101,12 @@ struct HourBlock: View {
             return ratio * columnWidth
         }
     }
-    
+
     func eventHeight(_ event: Event) -> CGFloat {
-        //logger.log(level: .debug, "height for \(event.length) is \((viewSize.height) / 60.0 * event.length)  hourHeight is \(viewSize.height)")
+        // logger.log(level: .debug, "height for \(event.length) is \((viewSize.height) / 60.0 * event.length)  hourHeight is \(viewSize.height)")
         return blockHeight / CalendarViewModel.secInHour * event.length
     }
-    
+
     func columnOffset(_ columnWidth: CGFloat) -> CGFloat {
         let refWidth = eventWidth(columnWidth)
         switch viewModel.layoutMode.alignMode {
@@ -118,28 +120,27 @@ struct HourBlock: View {
             return pixcel
         }
     }
-    
-    func eventOffsetX(event: Event,_ columnWidth: CGFloat) -> CGFloat {
-        if let index = viewModel.events.firstIndex(where: {event.id == $0.id}) {
+
+    func eventOffsetX(event: Event, _ columnWidth: CGFloat) -> CGFloat {
+        if let index = viewModel.events.firstIndex(where: { event.id == $0.id }) {
             let offset = columnOffset(eventWidth(columnWidth))
             return timeWidth + CGFloat(index) * offset
         }
         return timeWidth
     }
-    
+
     func offsetY(_ diffFromStart: TimeInterval, oneHourHeight: CGFloat) -> CGFloat {
         let diffInDot = diffFromStart / CalendarViewModel.secInHour * oneHourHeight
         return diffInDot - oneHourHeight * 0.5
     }
-    
+
     var blockHourRange: Range<TimeInterval> {
-        return blockStartInterval..<oneHourLater
+        blockStartInterval..<oneHourLater
     }
-    
+
     var oneHourLater: TimeInterval {
-        return blockStartInterval + CalendarViewModel.secInHour
+        blockStartInterval + CalendarViewModel.secInHour
     }
-    
 }
 
 struct NowLine: View {
@@ -153,7 +154,6 @@ struct NowLine: View {
         }
     }
 }
-
 
 struct DayView_Previews: PreviewProvider {
     static var previews: some View {
