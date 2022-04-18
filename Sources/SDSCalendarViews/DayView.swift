@@ -70,9 +70,9 @@ struct HourBlock: View {
                                     .padding(2)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                             }
+                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                             .offset(x: eventOffsetX(event: event, eventsWidth),
                                     y: offsetY(event.midInterval - blockStartInterval, oneHourHeight: blockHeight))
-                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                     }
                 }
             }
