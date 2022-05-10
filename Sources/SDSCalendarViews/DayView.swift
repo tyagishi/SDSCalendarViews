@@ -62,14 +62,20 @@ struct HourBlock: View {
             .overlay(alignment: .leading) {
                 ZStack(alignment: .topLeading) {
                     ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
-                        RoundedRectangle(cornerRadius: 3).fill(event.color)
+                        RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
                             .frame(width: eventWidth(eventsWidth), height: eventHeight(event))
                             .overlay {
                                 Text(event.title)
                                     .font(.footnote)
+                                    .bold()
+                                    .padding(.leading, 5)
                                     .padding(2)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                             }
+                            .overlay {
+                                event.color.frame(width: 5).frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .clipped()
                             .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
                             .offset(x: eventOffsetX(event: event, eventsWidth),
                                     y: offsetY(event.midInterval - blockStartInterval, oneHourHeight: blockHeight))
