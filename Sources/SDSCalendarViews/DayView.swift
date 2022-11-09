@@ -25,6 +25,7 @@ public struct DayView: View {
                     .id(CalendarViewModel.formattedHour(hour))
             }
         }
+        .background(Color.gray.opacity(0.1))
     }
 }
 
@@ -50,7 +51,6 @@ struct HourBlock: View {
                 .monospacedDigit()
             ZStack(alignment: .top) {
                 VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
-                // .offset(y: timeHeight * 0.5 * (-1))
                 GeometryReader { eventAreaGeom in
                     ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
                         RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
@@ -67,14 +67,14 @@ struct HourBlock: View {
                                 event.color.frame(width: 5).frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .clipped()
-                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
+                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))\n" +
+                                  event.title)
                             .offset(x: eventOffsetX(event: event, eventsWidth),
                                     y: offsetY(event.startInterval - blockStartInterval, oneHourHeight: eventAreaGeom.size.height))
                     }
                 }
             }
         }
-        .frame(maxHeight: .infinity, alignment: .top)
         .overlay {
             if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
                 HStack(spacing: 0) {
@@ -83,7 +83,6 @@ struct HourBlock: View {
                 .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
             }
         }
-        .background(Color.gray.opacity(0.1))
         // swiftlint:enable closure_body_length
     }
 
