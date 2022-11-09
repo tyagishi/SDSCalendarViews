@@ -78,11 +78,7 @@ public extension CalendarViewModel {
     static let secInHour: CGFloat = 60.0 * 60.0
     static let secInDay: CGFloat = 60.0 * 60.0 * 24.0
 
-    static func todayAt(_ hour: Int) -> Date {
-        // swiftlint:disable:next force_unwrapping
-        return Calendar.current.date(bySettingHour: hour, minute: 0, second: 0, of: Date())!
-    }
-    static func todayAt(_ hour: Int, _ minute: Int) -> Date {
+    static func todayAt(_ hour: Int, _ minute: Int = 0) -> Date {
         // swiftlint:disable:next force_unwrapping
         return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
     }
@@ -99,6 +95,8 @@ public class CalendarViewModel: ObservableObject {
 
     /// strategy how to put events in parallel (might be changed in the future, still under designing)
     public let layoutMode: LayoutMode// eventAlignMode: AlignMode
+
+    let timeLabelWidth: CGFloat = 0
 
     public init(start: Date, end: Date, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
         self.startDate = start

@@ -25,6 +25,7 @@ public struct DayView: View {
                     .id(CalendarViewModel.formattedHour(hour))
             }
         }
+        .background(Color.gray.opacity(0.1))
     }
 }
 
@@ -45,25 +46,15 @@ struct HourBlock: View {
     }
     var body: some View {
         // swiftlint:disable closure_body_length
-        ZStack {
-            HStack(spacing: 0) {
-                Text("00:00")
-                    .hidden()
-                    .overlay {
-                        Text(CalendarViewModel.formattedTime(blockStartInterval))
-                    }
-                    .readGeom { geomProxy in
-                        timeHeight = geomProxy.size.height
-                        timeWidth = geomProxy.size.width
-                    }
-                VStack { Divider() }.offset(y: timeHeight * 0.5 * (-1))
-            }
-            .frame(maxHeight: .infinity, alignment: .top)
-            .overlay(alignment: .leading) {
-                ZStack(alignment: .topLeading) {
+        HStack(alignment: .top, spacing: 0) {
+            Text(CalendarViewModel.formattedTime(blockStartInterval))
+                .monospacedDigit()
+            ZStack(alignment: .top) {
+                VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
+                GeometryReader { eventAreaGeom in
                     ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
                         RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
-                            .frame(width: eventWidth(eventsWidth), height: eventHeight(event))
+                            .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
                             .overlay {
                                 Text(event.title)
                                     .font(.footnote)
@@ -76,25 +67,21 @@ struct HourBlock: View {
                                 event.color.frame(width: 5).frame(maxWidth: .infinity, alignment: .leading)
                             }
                             .clipped()
-                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))")
+                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))\n" +
+                                  event.title)
                             .offset(x: eventOffsetX(event: event, eventsWidth),
-                                    y: offsetY(event.midInterval - blockStartInterval, oneHourHeight: blockHeight))
+                                    y: offsetY(event.startInterval - blockStartInterval, oneHourHeight: eventAreaGeom.size.height))
                     }
                 }
             }
-            .readGeom { geomProxy in
-                blockHeight = geomProxy.size.height
-                eventsWidth = geomProxy.size.width - timeWidth
-            }
-            .overlay {
-                if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
-                    HStack(spacing: 0) {
-                        NowLine(nowDate: now)
-                    }
-                    .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
+        }
+        .overlay {
+            if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
+                HStack(spacing: 0) {
+                    NowLine(nowDate: now)
                 }
+                .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
             }
-            .background(Color.gray.opacity(0.1))
         }
         // swiftlint:enable closure_body_length
     }
@@ -108,7 +95,7 @@ struct HourBlock: View {
         }
     }
 
-    func eventHeight(_ event: Event) -> CGFloat {
+    func eventHeight(_ event: Event, _ blockHeight: CGFloat) -> CGFloat {
         // logger.log(level: .debug, "height for \(event.length) is \((viewSize.height) / 60.0 * event.length)  hourHeight is \(viewSize.height)")
         return blockHeight / CalendarViewModel.secInHour * event.length
     }
@@ -137,7 +124,7 @@ struct HourBlock: View {
 
     func offsetY(_ diffFromStart: TimeInterval, oneHourHeight: CGFloat) -> CGFloat {
         let diffInDot = diffFromStart / CalendarViewModel.secInHour * oneHourHeight
-        return diffInDot - oneHourHeight * 0.5
+        return diffInDot //  - oneHourHeight * 0.5
     }
 
     var blockHourRange: Range<TimeInterval> {
