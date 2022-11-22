@@ -46,41 +46,55 @@ struct HourBlock: View {
     }
     var body: some View {
         // swiftlint:disable closure_body_length
-        HStack(alignment: .top, spacing: 0) {
-            Text(CalendarViewModel.formattedTime(blockStartInterval))
-                .monospacedDigit()
-            ZStack(alignment: .top) {
-                VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
-                GeometryReader { eventAreaGeom in
-                    ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
-                        RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
-                            .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
-                            .overlay {
-                                Text(event.title)
-                                    .font(.footnote)
-                                    .bold()
-                                    .padding(.leading, 5)
-                                    .padding(2)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        GeometryReader { blockGeom in
+            HStack(alignment: .top, spacing: 0) {
+                let timeLineOffsetY = offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval,
+                                              oneHourHeight: blockGeom.size.height)
+                VStack {
+                    Text(CalendarViewModel.formattedTime(blockStartInterval))
+                        .monospacedDigit()
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .overlay {
+                            VStack {
+                                if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
+                                    NowText(nowDate: now)
+                                        .offset(y: timeLineOffsetY)
+                                }
+
                             }
-                            .overlay {
-                                event.color.frame(width: 5).frame(maxWidth: .infinity, alignment: .leading)
-                            }
-                            .clipped()
-                            .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))\n" +
-                                  event.title)
-                            .offset(x: eventOffsetX(event: event, eventsWidth),
-                                    y: offsetY(event.startInterval - blockStartInterval, oneHourHeight: eventAreaGeom.size.height))
+                        }
+                }
+                ZStack(alignment: .top) {
+                    VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
+                    GeometryReader { eventAreaGeom in
+                        ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
+                            RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
+                                .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
+                                .overlay {
+                                    Text(event.title)
+                                        .font(.footnote).bold()
+                                        .padding(.leading, 5).padding(2)
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                                }
+                                .overlay {
+                                    event.color.frame(width: 5).frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                                .clipped()
+                                .help("\(CalendarViewModel.formattedTime(event.startInterval)) - \(CalendarViewModel.formattedTime(event.endInterval))\n" +
+                                      event.title)
+                                .offset(x: eventOffsetX(event: event, eventsWidth),
+                                        y: offsetY(event.startInterval - blockStartInterval, oneHourHeight: eventAreaGeom.size.height))
+                        }
                     }
                 }
-            }
-        }
-        .overlay {
-            if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
-                HStack(spacing: 0) {
-                    NowLine(nowDate: now)
+                .overlay {
+                    VStack {
+                        if blockHourRange.contains(now.timeIntervalSinceReferenceDate) {
+                            NowLine(nowDate: now)
+                                .offset(y: timeLineOffsetY)
+                        }
+                    }
                 }
-                .offset(y: offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval, oneHourHeight: blockHeight))
             }
         }
         // swiftlint:enable closure_body_length
@@ -124,7 +138,7 @@ struct HourBlock: View {
 
     func offsetY(_ diffFromStart: TimeInterval, oneHourHeight: CGFloat) -> CGFloat {
         let diffInDot = diffFromStart / CalendarViewModel.secInHour * oneHourHeight
-        return diffInDot //  - oneHourHeight * 0.5
+        return diffInDot - oneHourHeight * 0.5
     }
 
     var blockHourRange: Range<TimeInterval> {
@@ -136,14 +150,19 @@ struct HourBlock: View {
     }
 }
 
+struct NowText: View {
+    var nowDate: Date
+    var body: some View {
+        Text(CalendarViewModel.formattedTime(nowDate.timeIntervalSinceReferenceDate)).foregroundColor(.red).font(.caption)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+    }
+}
+
 struct NowLine: View {
     var nowDate: Date
     var body: some View {
-        HStack {
-            Text(CalendarViewModel.formattedTime(nowDate.timeIntervalSinceReferenceDate)).foregroundColor(.red).font(.caption)
-            VStack {
-                Divider().background(.red)
-            }
+        VStack {
+            Divider().background(.red)
         }
     }
 }
