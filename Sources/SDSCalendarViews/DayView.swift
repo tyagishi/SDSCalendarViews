@@ -48,8 +48,8 @@ struct HourBlock: View {
         // swiftlint:disable closure_body_length
         GeometryReader { blockGeom in
             HStack(alignment: .top, spacing: 0) {
-                let timeLineOffsetY = offsetY(now.timeIntervalSinceReferenceDate - blockStartInterval,
-                                              oneHourHeight: blockGeom.size.height)
+                let timeLineOffsetY = (now.timeIntervalSinceReferenceDate - blockStartInterval) / CalendarViewModel.secInHour * blockGeom.size.height
+                - blockGeom.size.height * 0.5
                 VStack {
                     Text(CalendarViewModel.formattedTime(blockStartInterval))
                         .monospacedDigit()
@@ -138,7 +138,7 @@ struct HourBlock: View {
 
     func offsetY(_ diffFromStart: TimeInterval, oneHourHeight: CGFloat) -> CGFloat {
         let diffInDot = diffFromStart / CalendarViewModel.secInHour * oneHourHeight
-        return diffInDot - oneHourHeight * 0.5
+        return diffInDot// - oneHourHeight * 0.5
     }
 
     var blockHourRange: Range<TimeInterval> {
