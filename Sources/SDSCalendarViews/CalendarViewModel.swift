@@ -15,12 +15,14 @@ public struct Event: Identifiable {
     public var start: Date
     public var end: Date
     public var color: Color
+    public var isAllDay: Bool
 
-    public init(_ id: String = UUID().uuidString, title: String, _ start: Date, _ end: Date, _ color: Color = .gray.opacity(0.6)) {
+    public init(_ id: String = UUID().uuidString, title: String, _ start: Date, _ end: Date, isAllDay: Bool = false, _ color: Color = .gray.opacity(0.6)) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.isAllDay = isAllDay
         self.color = color
     }
 
@@ -84,13 +86,14 @@ public extension CalendarViewModel {
     }
 }
 
-/// ViewModel for DayView
+/// ViewModel for CalendarViews(DayView/WeekView/MonthView in SDSCalendarViews)
 public class CalendarViewModel: ObservableObject {
     /// start date of view covers
     @Published public private(set) var startDate: Date
     /// end date of view covers
     @Published public private(set) var endDate: Date
     /// events which will be shown on view
+    /// note: might have allDayEvent
     @Published public private(set) var events: [Event] = []
 
     /// strategy how to put events in parallel (might be changed in the future, still under designing)
@@ -98,7 +101,7 @@ public class CalendarViewModel: ObservableObject {
 
     let timeLabelWidth: CGFloat = 0
 
-    public init(start: Date, end: Date, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
+    public init(start: Date, end: Date, events: [Event] = [], showAllDayEvent: Bool, layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
         self.startDate = start
         self.endDate = end
         self.events = events
@@ -143,7 +146,11 @@ extension CalendarViewModel {
                                           events: [ Event(title: "Daily", Self.todayAt(9, 0), Self.todayAt(10, 0), .red.opacity(0.6)),
                                                     Event(title: "Design", Self.todayAt(10, 30), Self.todayAt(11, 15), .blue.opacity(0.6)),
                                                     Event(title: "Lunch", Self.todayAt(12, 30), Self.todayAt(14), .brown.opacity(0.6)),
-                                                    Event(title: "Meeting", Self.todayAt(15, 30), Self.todayAt(18, 45), .green.opacity(0.6))],
+                                                    Event(title: "Meeting", Self.todayAt(15, 30), Self.todayAt(18, 45), .green.opacity(0.6)),
+                                                    Event(title: "AllDayEvent", Self.todayAt(0, 0), Self.todayAt(23, 59), isAllDay: true, .cyan.opacity(0.6)),
+                                                    Event(title: "Another Long AllDayEvent", Self.todayAt(0, 0), Self.todayAt(23, 59), isAllDay: true, .blue.opacity(0.6)),
+                                                  ],
+                                          showAllDayEvent: true,
                                           layoutMode: layoutMode)
 
 //        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
@@ -153,7 +160,9 @@ extension CalendarViewModel {
     }
     static public func emptyExample(_ date: Date) -> CalendarViewModel {
         let layoutMode = (EventWidth.fixed(100), AlignMode.oneLine)
-        let calViewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59), layoutMode: layoutMode)
+        let calViewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59),
+                                             showAllDayEvent: true,
+                                             layoutMode: layoutMode)
         return calViewModel
     }
 }
