@@ -13,9 +13,11 @@ import Combine
 public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let now: Date
-    public init( _ viewModel: CalendarViewModel, now: Date) {
+    let background: Color
+    public init( _ viewModel: CalendarViewModel, now: Date, background: Color = .gray.opacity(0.1)) {
         self.viewModel = viewModel
         self.now = now
+        self.background = background
     }
     public var body: some View {
         VStack(spacing: 0) {
@@ -25,8 +27,31 @@ public struct DayView: View {
                     .id(CalendarViewModel.formattedHour(hour))
             }
         }
-        .background(Color.gray.opacity(0.1))
+        .background(background)
     }
+}
+
+public struct DayEventView: View {
+    @ObservedObject var viewModel: CalendarViewModel
+    let now: Date
+    let background: Color
+    public init( _ viewModel: CalendarViewModel, now: Date, background: Color = .gray.opacity(0.1)) {
+        self.viewModel = viewModel
+        self.now = now
+        self.background = background
+    }
+    public var body: some View {
+        VStack(spacing: 0) {
+            ForEach(viewModel.events.filter({ $0.isAllDay == true })) { allDayEvent in
+                Text(" " + allDayEvent.title)
+                    .lineLimit(1).minimumScaleFactor(0.1)
+                    .foregroundColor(allDayEvent.color)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .background(background)
+    }
+
 }
 
 struct HourBlock: View {
@@ -67,7 +92,7 @@ struct HourBlock: View {
                 ZStack(alignment: .top) {
                     VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
                     GeometryReader { eventAreaGeom in
-                        ForEach(viewModel.events.filter({ blockHourRange.contains($0.midInterval) })) { event in
+                        ForEach(viewModel.events.filter({ $0.isAllDay == false }).filter({ blockHourRange.contains($0.midInterval) })) { event in
                             RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
                                 .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
                                 .overlay {

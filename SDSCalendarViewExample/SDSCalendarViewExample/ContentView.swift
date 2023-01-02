@@ -28,10 +28,12 @@ struct ContentView: View {
     @StateObject var calViewModel = CalendarViewModel.example()
     @StateObject var dateProvider = DateProvider()
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
+            DayEventView(calViewModel, now: dateProvider.date, background: .red.opacity(0.1))
+                .frame(width: 216) // for macOS. it should be 200 for iOS
             ScrollViewReader { scrollProxy in
                 ScrollView(.vertical){
-                    DayView(calViewModel, now: dateProvider.date)
+                    DayView(calViewModel, now: dateProvider.date, background: .yellow.opacity(0.2))
                         .frame(width: 200)
                         .frame(height: 1000)
                 }
@@ -42,6 +44,7 @@ struct ContentView: View {
                 }
             }
         }
+        .frame(width: 200)
     }
 }
 
