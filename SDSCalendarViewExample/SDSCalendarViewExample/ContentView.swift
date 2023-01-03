@@ -25,26 +25,20 @@ class DateProvider: ObservableObject {
 }
 
 struct ContentView: View {
-    @StateObject var calViewModel = CalendarViewModel.example()
-    @StateObject var dateProvider = DateProvider()
+    @StateObject var viewModel = CalendarViewModel.exampleForWeekView()  //CalendarViewModel.example()
     var body: some View {
-        VStack(spacing: 0) {
-            DayEventView(calViewModel, now: dateProvider.date, background: .red.opacity(0.1))
-                .frame(width: 216) // for macOS. it should be 200 for iOS
-            ScrollViewReader { scrollProxy in
-                ScrollView(.vertical){
-                    DayView(calViewModel, now: dateProvider.date, background: .yellow.opacity(0.2))
-                        .frame(width: 200)
-                        .frame(height: 1000)
+        TabView {
+            DayViewExample()
+                .tabItem {
+                    Label("DayView", systemImage: "d.square.fill")
                 }
-                .onAppear {
-                    withAnimation {
-                        scrollProxy.scrollTo(CalendarViewModel.formattedHour(Date().timeIntervalSinceReferenceDate), anchor: .center)
-                    }
+                .environmentObject(viewModel)
+            VerticalDaysViewExample()
+                .tabItem {
+                    Label("WeekView", systemImage: "w.square.fill")
                 }
-            }
+                .environmentObject(viewModel)
         }
-        .frame(width: 200)
     }
 }
 
@@ -53,3 +47,6 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
+

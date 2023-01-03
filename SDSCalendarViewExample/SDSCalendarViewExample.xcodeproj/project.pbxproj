@@ -12,6 +12,8 @@
 		36039D8D291BA19E00A4EB7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36039D8C291BA19E00A4EB7A /* Assets.xcassets */; };
 		36039D91291BA19E00A4EB7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36039D90291BA19E00A4EB7A /* Preview Assets.xcassets */; };
 		36039D9B291BA1E200A4EB7A /* SDSCalendarViews in Frameworks */ = {isa = PBXBuildFile; productRef = 36039D9A291BA1E200A4EB7A /* SDSCalendarViews */; };
+		361309852962B07D00721674 /* DayViewExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361309842962B07D00721674 /* DayViewExample.swift */; };
+		3629E13629644453005F6BED /* VerticalDaysViewExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3629E13529644453005F6BED /* VerticalDaysViewExample.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		36039D8E291BA19E00A4EB7A /* SDSCalendarViewExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDSCalendarViewExample.entitlements; sourceTree = "<group>"; };
 		36039D90291BA19E00A4EB7A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		36039D98291BA1CC00A4EB7A /* SDSCalendarViews */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SDSCalendarViews; path = ..; sourceTree = "<group>"; };
+		361309842962B07D00721674 /* DayViewExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayViewExample.swift; sourceTree = "<group>"; };
+		3629E13529644453005F6BED /* VerticalDaysViewExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalDaysViewExample.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 			children = (
 				36039D88291BA19D00A4EB7A /* SDSCalendarViewExampleApp.swift */,
 				36039D8A291BA19D00A4EB7A /* ContentView.swift */,
+				361309842962B07D00721674 /* DayViewExample.swift */,
+				3629E13529644453005F6BED /* VerticalDaysViewExample.swift */,
 				36039D8C291BA19E00A4EB7A /* Assets.xcassets */,
 				36039D8E291BA19E00A4EB7A /* SDSCalendarViewExample.entitlements */,
 				36039D8F291BA19E00A4EB7A /* Preview Content */,
@@ -164,6 +170,8 @@
 			files = (
 				36039D8B291BA19D00A4EB7A /* ContentView.swift in Sources */,
 				36039D89291BA19D00A4EB7A /* SDSCalendarViewExampleApp.swift in Sources */,
+				3629E13629644453005F6BED /* VerticalDaysViewExample.swift in Sources */,
+				361309852962B07D00721674 /* DayViewExample.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
