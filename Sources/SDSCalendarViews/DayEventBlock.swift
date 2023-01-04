@@ -10,11 +10,10 @@ import SwiftUI
 public struct DayEventBlock: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
-    let background: Color
-    public init( _ viewModel: CalendarViewModel, date: Date, background: Color = .gray.opacity(0.1)) {
+
+    public init( _ viewModel: CalendarViewModel, date: Date) {
         self.viewModel = viewModel
         self.date = date
-        self.background = background
     }
     public var body: some View {
         VStack(spacing: 0) {
@@ -25,7 +24,6 @@ public struct DayEventBlock: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .background(background)
     }
 }
 

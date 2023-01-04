@@ -14,15 +14,11 @@ public struct DayView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
     let now: Date
-    let background: Color
-    let showTime: Bool
-    public init( _ viewModel: CalendarViewModel, date: Date, now: Date, background: Color = .gray.opacity(0.1),
-                 showTime: Bool = true) {
+
+    public init( _ viewModel: CalendarViewModel, date: Date, now: Date) {
         self.viewModel = viewModel
         self.date = date
         self.now = now
-        self.background = background
-        self.showTime = showTime
     }
     public var body: some View {
         GeometryReader { geom in
@@ -39,7 +35,6 @@ public struct DayView: View {
                         .offset(y: offsetY(now: now, oneHourHeight: hourHeight))
                 }
             }
-            .background(background)
         }
     }
 

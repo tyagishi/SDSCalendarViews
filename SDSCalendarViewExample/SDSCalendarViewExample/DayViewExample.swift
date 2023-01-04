@@ -28,23 +28,25 @@ struct DayViewExample: View {
             HStack(spacing:0) {
                 VStack(spacing: 0 ) {
                     Text("without Scroll (specified size: 200x1000)")
-                    DayEventBlock(viewModel, date: date, background: background)
-                    DayView(viewModel, date: date, now: dateProvider.date, background: background)
+                    DayEventBlock(viewModel, date: date)
+                    DayView(viewModel, date: date, now: dateProvider.date)
                 }
+                .background(background)
                 .frame(width: 200)
                 .frame(height: 1000)
                 VStack(spacing: 0 ) {
                     Text("without Scroll (specified size: 200 width)")
-                    DayEventBlock(viewModel, date: date, background: background)
-                    DayView(viewModel, date: date, now: dateProvider.date, background: background)
+                    DayEventBlock(viewModel, date: date)
+                    DayView(viewModel, date: date, now: dateProvider.date)
                 }
+                .background(background)
                 .frame(width: 200)
                 VStack(spacing: 0 ) {
                     Text("with Scroll specified height: 1000 scrollView:200x600")
-                    DayEventBlock(viewModel, date: date, background: background)
+                    DayEventBlock(viewModel, date: date)
                     ScrollViewReader { scrollProxy in
                         ScrollView(.vertical) {
-                            DayView(viewModel, date: date, now: dateProvider.date, background: background)
+                            DayView(viewModel, date: date, now: dateProvider.date)
                                 .frame(height: 1000)
                         }
                         .onAppear {
@@ -54,6 +56,7 @@ struct DayViewExample: View {
                         }
                     }
                 }
+                .background(background)
                 .frame(width: 200, height: 600)
             }
         }

@@ -11,14 +11,13 @@ public struct VerticalDaysView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let dayRange: Range<Date> // days for display like 2022/Jan/01..<2022/Jan/08 (no care about time)
     let now: Date
-    let background: Color
     let dayLong = 60 * 60 * 24
+
     public init( _ viewModel: CalendarViewModel, dayRange: Range<Date>,
-                 now: Date, background: Color = .gray.opacity(0.1)) {
+                 now: Date) {
         self.viewModel = viewModel
         self.dayRange = dayRange
         self.now = now
-        self.background = background
     }
     public var body: some View {
         HStack(spacing: 0) {
@@ -36,7 +35,6 @@ public struct VerticalDaysView: View {
                         }
                     }
                 }
-                .background(background)
                 .overlay {
                     NowTextLine(now: now, labelWidth: labelWidth)
                         .offset(y: offsetY(now: now, oneHourHeight: hourHeight))
