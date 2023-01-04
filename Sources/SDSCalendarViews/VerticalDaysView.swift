@@ -24,14 +24,13 @@ public struct VerticalDaysView: View {
             let columnNum = CGFloat(dayNum + 1)
             GeometryReader { geom in
                 let labelWidth = geom.size.width / columnNum
-                let eventWidth = geom.size.width / columnNum
                 let hourHeight = geom.size.height / (CGFloat(viewModel.endHour - viewModel.startHour))
                 HStack(spacing: 0) {
                     TimeColumn(viewModel: viewModel, date: dayRange.lowerBound, labelWidth: labelWidth, hourHeight: hourHeight)
                     ForEach(viewModel.eachDayRange(dayRange), id: \.self) { dayStart in
                         Divider().foregroundColor(.black)
                         VStack {
-                            EventColumn(viewModel: viewModel, date: dayStart, now: now, eventWidth: eventWidth, hourHeight: hourHeight)
+                            EventColumn(viewModel: viewModel, date: dayStart, hourHeight: hourHeight)
                         }
                     }
                 }

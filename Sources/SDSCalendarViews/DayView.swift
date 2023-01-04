@@ -23,11 +23,10 @@ public struct DayView: View {
     public var body: some View {
         GeometryReader { geom in
             let labelWidth = geom.size.width * 0.25
-            let eventWidth = geom.size.width * 0.75
             let hourHeight = geom.size.height / (CGFloat(viewModel.endHour - viewModel.startHour))
             HStack(spacing: 0) {
                 TimeColumn(viewModel: viewModel, date: date, labelWidth: labelWidth, hourHeight: hourHeight)
-                EventColumn(viewModel: viewModel, date: date, now: now, eventWidth: eventWidth, hourHeight: hourHeight)
+                EventColumn(viewModel: viewModel, date: date, hourHeight: hourHeight)
             }
             .overlay {
                 if date.dayLongRange.contains(now) {

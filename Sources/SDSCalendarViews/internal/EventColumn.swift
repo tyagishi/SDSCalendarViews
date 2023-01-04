@@ -10,8 +10,6 @@ import SwiftUI
 struct EventColumn: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
-    let now: Date
-    let eventWidth: CGFloat
     let hourHeight: CGFloat
 
     var body: some View {
@@ -28,6 +26,6 @@ struct EventColumn: View {
 
 struct EventColumn_Previews: PreviewProvider {
     static var previews: some View {
-        EventColumn(viewModel: CalendarViewModel.emptyExample(Date()), date: Date(), now: Date(), eventWidth: 100, hourHeight: 80)
+        EventColumn(viewModel: CalendarViewModel.emptyExample(Date()), date: Date(), hourHeight: 80)
     }
 }

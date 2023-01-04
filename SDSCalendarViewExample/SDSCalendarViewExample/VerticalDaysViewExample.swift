@@ -18,6 +18,7 @@ struct VerticalDaysViewExample: View {
                 VerticalDaysView(viewModel, dayRange: dayRange, now: Date())
                     .frame(height: 1000)
             }
+            .background(Color.gray.opacity(0.2))
             ScrollView {
                 Text("with scroll")
                 VerticalDaysView(viewModel, dayRange: dayRange, now: Date())

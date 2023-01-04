@@ -13,27 +13,16 @@ struct NowTextLine: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            NowText(nowDate: now)
+            Text(CalendarViewModel.formattedTime(now))
+                .font(.caption)
+                .minimumScaleFactor(0.1)
+                .foregroundColor(.red)
+                .padding(.horizontal, 3)
+                .frame(maxWidth: .infinity, alignment: .trailing)
                 .frame(width: labelWidth)
-            NowLine(nowDate: now)
-        }
-    }
-}
-
-struct NowText: View {
-    var nowDate: Date
-    var body: some View {
-        Text(CalendarViewModel.formattedTime(nowDate)).foregroundColor(.red).font(.caption).minimumScaleFactor(0.1)
-            .padding(.horizontal, 3)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-    }
-}
-
-struct NowLine: View {
-    var nowDate: Date
-    var body: some View {
-        VStack(spacing: 0) {
-            Divider().background(.red)
+            VStack(spacing: 0) {
+                Divider().background(.red)
+            }
         }
     }
 }
