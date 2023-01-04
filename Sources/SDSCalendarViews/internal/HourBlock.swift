@@ -13,25 +13,14 @@ struct HourBlock: View {
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "HourBlock")
     let blockHourRange: Range<Date>
     let date: Date
-    let now: Date
-    let showTime: Bool
-    let eventWidth: CGFloat
-    let hourHeight: CGFloat
 
     @State private var timeWidth: CGFloat = 10
-    @State private var timeHeight: CGFloat = 10
-    @State private var blockHeight: CGFloat = 10
     @State private var eventsWidth: CGFloat = 10
 
-    init(_ viewModel: CalendarViewModel, _ date: Date, _ blockHourRange: Range<Date>, _ now: Date, showTime: Bool = true,
-         eventWidth: CGFloat, hourHeight: CGFloat) {
+    init(_ viewModel: CalendarViewModel, _ date: Date, _ blockHourRange: Range<Date>) {
         self.viewModel = viewModel
         self.blockHourRange = blockHourRange
         self.date = date
-        self.now = now
-        self.showTime = showTime
-        self.eventWidth = eventWidth
-        self.hourHeight = hourHeight
     }
     var body: some View {
         let blockStartInterval = blockHourRange.lowerBound.timeIntervalSinceReferenceDate
@@ -104,7 +93,6 @@ struct HourBlock: View {
 
 struct HourBlock_Previews: PreviewProvider {
     static var previews: some View {
-        HourBlock(CalendarViewModel.exampleForWeekView(), Date(), CalendarViewModel.dateRange(Date(), -1, 2), Date(),
-                  eventWidth: 280, hourHeight: 80)
+        HourBlock(CalendarViewModel.exampleForWeekView(), Date(), CalendarViewModel.dateRange(Date(), -1, 2))
     }
 }

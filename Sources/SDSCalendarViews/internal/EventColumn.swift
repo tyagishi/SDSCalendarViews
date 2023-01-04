@@ -17,9 +17,8 @@ struct EventColumn: View {
     var body: some View {
         VStack(spacing: 0) {
             ForEach(viewModel.hourRanges(date), id: \.self) { hourRange in
-                HourBlock(viewModel, date, hourRange, now, showTime: false,
-                          eventWidth: eventWidth, hourHeight: hourHeight)
-                .frame(height: hourHeight)
+                HourBlock(viewModel, date, hourRange)
+                    .frame(height: hourHeight)
                     .environmentObject(viewModel)
                     .id(CalendarViewModel.formattedHour(hourRange.lowerBound))
             }
