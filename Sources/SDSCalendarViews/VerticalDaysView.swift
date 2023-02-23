@@ -11,7 +11,6 @@ public struct VerticalDaysView: View {
     @ObservedObject var viewModel: CalendarViewModel
     let dayRange: Range<Date> // days for display like 2022/Jan/01..<2022/Jan/08 (no care about time)
     let now: Date
-    let dayLong = 60 * 60 * 24
 
     public init( _ viewModel: CalendarViewModel, dayRange: Range<Date>,
                  now: Date) {

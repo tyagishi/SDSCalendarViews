@@ -9,7 +9,6 @@ import SwiftUI
 import SDSCalendarViews
 
 struct DayViewExample: View {
-    let dayLong:TimeInterval = 60 * 60 * 24
     @EnvironmentObject var viewModel: CalendarViewModel
     @StateObject var dateProvider = DateProvider()
     @State var date: Date = Date()
@@ -17,10 +16,10 @@ struct DayViewExample: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Button(action: {date = date.advanced(by: -1 * dayLong)}, label: {
+                Button(action: {date = date.advanced(by: -1 * CalendarViewModel.secInDay)}, label: {
                     Image(systemName: "arrow.left")
                 })
-                Button(action: {date = date.advanced(by:dayLong)}, label: {
+                Button(action: {date = date.advanced(by:CalendarViewModel.secInDay)}, label: {
                     Image(systemName: "arrow.right")
                 })
             }

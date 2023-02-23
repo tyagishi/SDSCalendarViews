@@ -12,7 +12,7 @@ import SwiftUI
 extension Date {
     public var dayLongRange: Range<Date> {
         let start = Calendar.current.startOfDay(for: self)
-        let end = Calendar.current.startOfDay(for: self).addingTimeInterval(60 * 60 * 24)
+        let end = Calendar.current.startOfDay(for: self).addingTimeInterval(CalendarViewModel.secInDay)
         return start..<end
     }
 }
@@ -99,8 +99,8 @@ public extension CalendarViewModel {
         return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
     }
     static func dateAt(_ dayOffset: Int, _ hour: Int, _ minute: Int = 0) -> Date {
-        let dayLong = 60 * 60 * 24
-        let theDay = Calendar.current.startOfDay(for: Date()).advanced(by: ((Double)(dayLong * dayOffset)))
+        let advance = CalendarViewModel.secInDay * CGFloat(dayOffset)
+        let theDay = Calendar.current.startOfDay(for: Date()).advanced(by: advance)
         // swiftlint:disable:next force_unwrapping
         return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: theDay)!
     }
@@ -109,8 +109,8 @@ public extension CalendarViewModel {
 /// ViewModel for CalendarViews(DayView/WeekView/MonthView in SDSCalendarViews)
 public class CalendarViewModel: ObservableObject {
     // views will show startHour..<endHour range
-    @Published public private(set) var startHour: Int
-    @Published public private(set) var endHour: Int
+    @Published public private(set) var startHour: Int // i.e. from startHour:00:00
+    @Published public private(set) var endHour: Int   // i.e. till (endHour-1):59:59
 
     /// events which will be shown on view
     /// note: might have allDayEvent
@@ -135,7 +135,7 @@ public class CalendarViewModel: ObservableObject {
     }
     public func endDate(_ date: Date) -> Date {
         // swiftlint:disable force_unwrapping
-        Calendar.current.date(bySettingHour: endHour, minute: 0, second: 0, of: date)!
+        Calendar.current.date(bySettingHour: endHour - 1, minute: 59, second: 59, of: date)!
     }
 
     public func oneHourRange(_ date: Date, startHour: Int) -> Range<Date> {
