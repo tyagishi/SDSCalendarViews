@@ -31,7 +31,7 @@ struct ContentView: View {
                 }
                 .onAppear {
                     withAnimation {
-                        scrollProxy.scrollTo(CalendarViewModel.formattedHour(Date().timeIntervalSinceReferenceDate), anchor: .center)
+                        scrollProxy.scrollTo(CalendarViewModel.formattedHour(Date()), anchor: .center)
                     }
                 }
             }
@@ -43,10 +43,20 @@ struct ContentView: View {
 
 ### ViewModel
 ```
+/// ViewModel for CalendarViews(DayView/WeekView/MonthView in SDSCalendarViews)
 public class CalendarViewModel: ObservableObject {
-    @Published public private(set) var startDate: Date
-    @Published public private(set) var endDate: Date
-    @Published public private(set) var events:[Event] = []
+    // views will show startHour...endHour range
+    @Published public private(set) var startHour: Int
+    @Published public private(set) var endHour: Int
+
+    /// events which will be shown on view
+    /// note: might have allDayEvent
+    @Published public private(set) var events: [Event] = []
+
+    /// strategy how to put events in parallel (might be changed in the future, still under designing)
+    public let layoutMode: LayoutMode// eventAlignMode: AlignMode
+
+    let timeLabelWidth: CGFloat = 0
     ...
 }
 public struct Event: Identifiable {
@@ -55,6 +65,9 @@ public struct Event: Identifiable {
     public var start: Date
     public var end: Date
     public var color: Color
+    public var isAllDay: Bool
+
+    ...
 }
 ```
     

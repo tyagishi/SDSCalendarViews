@@ -9,18 +9,28 @@ import Foundation
 import Combine
 import SwiftUI
 
+extension Date {
+    public var dayLongRange: Range<Date> {
+        let start = Calendar.current.startOfDay(for: self)
+        let end = Calendar.current.startOfDay(for: self).addingTimeInterval(CalendarViewModel.secInDay)
+        return start..<end
+    }
+}
+
 public struct Event: Identifiable {
     public var id: String // store calendarItemIdentifier in case of EKEvent
     public var title: String
     public var start: Date
     public var end: Date
     public var color: Color
+    public var isAllDay: Bool
 
-    public init(_ id: String = UUID().uuidString, title: String, _ start: Date, _ end: Date, _ color: Color = .gray.opacity(0.6)) {
+    public init(_ id: String = UUID().uuidString, title: String, _ start: Date, _ end: Date, isAllDay: Bool = false, _ color: Color = .gray.opacity(0.6)) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
+        self.isAllDay = isAllDay
         self.color = color
     }
 
@@ -34,8 +44,14 @@ public struct Event: Identifiable {
     public var midInterval: TimeInterval {
         (startInterval + endInterval) / 2.0
     }
+
+    public var midDate: Date {
+        let midInterval = (start.timeIntervalSinceReferenceDate + end.timeIntervalSinceReferenceDate) / 2.0
+        return Date(timeIntervalSinceReferenceDate: midInterval)
+    }
+
     public var length: TimeInterval {
-        (endInterval - startInterval)
+        end.timeIntervalSinceReferenceDate - start.timeIntervalSinceReferenceDate
     }
 
     public func eventContainDate(_ date: Date) -> Bool {
@@ -82,15 +98,22 @@ public extension CalendarViewModel {
         // swiftlint:disable:next force_unwrapping
         return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
     }
+    static func dateAt(_ dayOffset: Int, _ hour: Int, _ minute: Int = 0) -> Date {
+        let advance = CalendarViewModel.secInDay * CGFloat(dayOffset)
+        let theDay = Calendar.current.startOfDay(for: Date()).advanced(by: advance)
+        // swiftlint:disable:next force_unwrapping
+        return Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: theDay)!
+    }
 }
 
-/// ViewModel for DayView
+/// ViewModel for CalendarViews(DayView/WeekView/MonthView in SDSCalendarViews)
 public class CalendarViewModel: ObservableObject {
-    /// start date of view covers
-    @Published public private(set) var startDate: Date
-    /// end date of view covers
-    @Published public private(set) var endDate: Date
+    // views will show startHour..<endHour range
+    @Published public private(set) var startHour: Int // i.e. from startHour:00:00
+    @Published public private(set) var endHour: Int   // i.e. till (endHour-1):59:59
+
     /// events which will be shown on view
+    /// note: might have allDayEvent
     @Published public private(set) var events: [Event] = []
 
     /// strategy how to put events in parallel (might be changed in the future, still under designing)
@@ -98,27 +121,40 @@ public class CalendarViewModel: ObservableObject {
 
     let timeLabelWidth: CGFloat = 0
 
-    public init(start: Date, end: Date, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
-        self.startDate = start
-        self.endDate = end
+    public init(startHour: Int, endHour: Int, events: [Event] = [], layoutMode: LayoutMode = (.fixed(100), .sideBySide)) {
+        self.startHour = startHour
+        self.endHour = endHour
+
         self.events = events
         self.layoutMode = layoutMode
     }
 
-    public var startTimeInterval: TimeInterval {
-        startDate.timeIntervalSinceReferenceDate
+    public func startDate(_ date: Date) -> Date {
+        // swiftlint:disable force_unwrapping
+        Calendar.current.date(bySettingHour: startHour, minute: 0, second: 0, of: date)!
     }
-    public var endTimeInterval: TimeInterval {
-        endDate.timeIntervalSinceReferenceDate
-    }
-
-    var hourArray: [TimeInterval] {
-        Array(stride( from: startTimeInterval, through: endTimeInterval, by: CalendarViewModel.secInHour))
+    public func endDate(_ date: Date) -> Date {
+        // swiftlint:disable force_unwrapping
+        Calendar.current.date(bySettingHour: endHour - 1, minute: 59, second: 59, of: date)!
     }
 
-    @MainActor public func setStartEnd(_ start: Date, _ end: Date) {
-        self.startDate = start
-        self.endDate = end
+    public func oneHourRange(_ date: Date, startHour: Int) -> Range<Date> {
+        // swiftlint:disable force_unwrapping
+        let start = Calendar.current.date(bySettingHour: startHour, minute: 0, second: 0, of: date)!
+
+        let endHour = min(startHour + 1, 23)
+        // swiftlint:disable force_unwrapping
+        let end = Calendar.current.date(bySettingHour: endHour, minute: 59, second: 59, of: date)!
+        return start..<end
+    }
+
+    public func hourRanges(_ date: Date) -> [Range<Date>] {
+        (startHour..<endHour).map({ self.oneHourRange(date, startHour: $0) })
+    }
+
+    public func midDate(_ date: Date) -> Date {
+        let midInterval = (startDate(date).timeIntervalSinceReferenceDate + endDate(date).timeIntervalSinceReferenceDate) / 2.0
+        return Date(timeIntervalSinceReferenceDate: midInterval)
     }
 
     @MainActor public func clearEvents() async {
@@ -133,47 +169,73 @@ public class CalendarViewModel: ObservableObject {
             self.events.append(event)
         }
     }
+    public func eventsFor(_ date: Date, allDayEvent: Bool = false) -> [Event] {
+        let dayRange = date.dayLongRange
+        return events.filter({ $0.isAllDay == false }).filter({ ($0.start..<$0.end).overlaps(dayRange) })
+    }
+    public func allDayEventFor(_ date: Date) -> [Event] {
+        let dayRange = date.dayLongRange
+        return events.filter({ $0.isAllDay == true }).filter({ ($0.start..<$0.end).overlaps(dayRange) })
+    }
+
 }
 
-// MARK: example
 extension CalendarViewModel {
-    static public func example() -> CalendarViewModel {
-        let layoutMode = (EventWidth.ratio(0.8), AlignMode.oneLine)
-        let viewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59),
-                                          events: [ Event(title: "Daily", Self.todayAt(9, 0), Self.todayAt(10, 0), .red.opacity(0.6)),
-                                                    Event(title: "Design", Self.todayAt(10, 30), Self.todayAt(11, 15), .blue.opacity(0.6)),
-                                                    Event(title: "Lunch", Self.todayAt(12, 30), Self.todayAt(14), .brown.opacity(0.6)),
-                                                    Event(title: "Meeting", Self.todayAt(15, 30), Self.todayAt(18, 45), .green.opacity(0.6))],
-                                          layoutMode: layoutMode)
+    public func isSameDay(_ date1: Date, _ date2: Date) -> Bool {
+        Calendar.current.isDate(date1, inSameDayAs: date2)
+    }
+}
 
-//        viewModel.eventAlignMode = .shiftByRatio(80, ratio: 0.5)
-//        viewModel.eventAlignMode = .shiftByPixel(100, pixcel: 40)
-//        viewModel.eventAlignMode = .oneLine(250)
-        return viewModel
+// MARK: convenient method for Range<Date>
+extension CalendarViewModel {
+    static public func oneWeekFrom(_ date: Date) -> Range<Date> {
+        Date()..<(Date().advanced(by: CalendarViewModel.secInDay * 7))
     }
-    static public func emptyExample(_ date: Date) -> CalendarViewModel {
-        let layoutMode = (EventWidth.fixed(100), AlignMode.oneLine)
-        let calViewModel = CalendarViewModel(start: Self.todayAt(8), end: Self.todayAt(22, 59), layoutMode: layoutMode)
-        return calViewModel
+
+    /// generate Range<Date> from given info
+    /// - Parameters:
+    ///   - date: reference date
+    ///   - from: start offset days relative to reference date (0: from today, -1: from yesterday) at 0:00
+    ///   - to: end offset days relative to reference date (1: until tomorrow(incl)) 
+    /// - Returns: startDate..<endDate>
+    static public func dateRange(_ date: Date, _ from: Int, _ to: Int) -> Range<Date> {
+
+        let startDay = Calendar.current.startOfDay(for: date).advanced(by: CalendarViewModel.secInDay * CGFloat(from))
+        let endDay = Calendar.current.startOfDay(for: date).advanced(by: CalendarViewModel.secInDay * CGFloat(to + 1))
+        return startDay..<endDay
     }
+//    static public func oneWeekFromMonday(_ date: Date) -> Range<Date> {
+//        let monday = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: date).date!
+//        let monday = Calendar.current.dateInterval(of: .weekOfYear, for: <#T##Date#>)
+//    }
+
+    public func eachDayRange(_ range: Range<Date>, stride: TimeInterval = CalendarViewModel.secInDay) -> [Date] {
+        var ret: [Date] = []
+
+        var date = range.lowerBound
+        ret.append(date)
+        while date.timeIntervalSinceReferenceDate + stride < range.upperBound.timeIntervalSinceReferenceDate {
+            date += stride
+            ret.append(date)
+        }
+        return ret
+    }
+
 }
 
 // MARK: formatter
 extension CalendarViewModel {
-    static public func formattedDate(_ interval: TimeInterval) -> String {
-        let date = Date(timeIntervalSinceReferenceDate: interval)
+    static public func formattedDate(_ date: Date) -> String {
         let dateComp = Calendar.current.dateComponents([.year, .month, .day], from: date)
         // swiftlint:disable:next force_unwrapping
         return String(format: "%4d/%02d/%02d", dateComp.year!, dateComp.month!, dateComp.day!)
     }
-    static public func formattedHour(_ interval: TimeInterval) -> String {
-        let date = Date(timeIntervalSinceReferenceDate: interval)
+    static public func formattedHour(_ date: Date) -> String {
         let dateComp = Calendar.current.dateComponents([.hour], from: date)
         // swiftlint:disable:next force_unwrapping
         return String(format: "%2d:00", dateComp.hour!)
     }
-    static public func formattedTime(_ interval: TimeInterval) -> String {
-        let date = Date(timeIntervalSinceReferenceDate: interval)
+    static public func formattedTime(_ date: Date) -> String {
         let dateComp = Calendar.current.dateComponents([.hour, .minute], from: date)
         // swiftlint:disable:next force_unwrapping
         return String(format: "%02d:%02d", dateComp.hour!, dateComp.minute!)
