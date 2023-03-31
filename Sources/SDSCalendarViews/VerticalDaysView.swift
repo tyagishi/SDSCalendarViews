@@ -53,6 +53,13 @@ public struct VerticalDaysView: View {
     }
 }
 
+extension VerticalDaysView {
+    public func timeColumnFont(_ font: Font) -> some View {
+        self
+            .environment(\.timeColumnFont, font)
+    }
+}
+
 struct DayRangeView_Previews: PreviewProvider {
     static var previews: some View {
         VerticalDaysView(CalendarViewModel.example(),

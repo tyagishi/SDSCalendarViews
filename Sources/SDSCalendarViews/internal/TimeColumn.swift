@@ -7,7 +7,24 @@
 
 import SwiftUI
 
+public struct TimeColumnFontKey: EnvironmentKey {
+    public typealias Value = Font
+    static public var defaultValue: Font = .body
+}
+
+extension EnvironmentValues {
+    public var timeColumnFont: Font {
+        get {
+            self[TimeColumnFontKey.self]
+        }
+        set {
+            self[TimeColumnFontKey.self] = newValue
+        }
+    }
+}
+
 struct TimeColumn: View {
+    @Environment(\.timeColumnFont) var font
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
     let labelWidth: CGFloat
@@ -18,6 +35,7 @@ struct TimeColumn: View {
             ForEach(viewModel.hourRanges(date), id: \.self) { hour in
                 Text(CalendarViewModel.formattedTime(hour.lowerBound)).minimumScaleFactor(0.1)
                     .monospacedDigit()
+                    .font(font)
                     .padding(.leading, 4)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .frame(width: labelWidth, height: hourHeight)
