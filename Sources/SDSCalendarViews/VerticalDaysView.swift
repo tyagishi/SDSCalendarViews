@@ -53,10 +53,22 @@ public struct VerticalDaysView: View {
     }
 }
 
-extension VerticalDaysView {
+extension View {
+    public func eventColumnFontDic(_ fontDic: [Date: Font]) -> some View {
+        self
+            .environment(\.eventColumnFontDic, fontDic)
+    }
+    public func eventColumnDefaultFont(_ font: Font) -> some View {
+        self
+            .environment(\.eventColumnDefaultFont, font)
+    }
     public func timeColumnFont(_ font: Font) -> some View {
         self
             .environment(\.timeColumnFont, font)
+    }
+    public func nowLineFont(_ font: Font) -> some View {
+        self
+            .environment(\.nowLineFont, font)
     }
 }
 

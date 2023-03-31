@@ -7,14 +7,31 @@
 
 import SwiftUI
 
+public struct NowLineFontKey: EnvironmentKey {
+    public typealias Value = Font
+    static public var defaultValue: Font = .body
+}
+
+extension EnvironmentValues {
+    public var nowLineFont: Font {
+        get {
+            self[NowLineFontKey.self]
+        }
+        set {
+            self[NowLineFontKey.self] = newValue
+        }
+    }
+}
+
 struct NowTextLine: View {
+    @Environment(\.nowLineFont) var font: Font
     let now: Date
     let labelWidth: CGFloat
 
     var body: some View {
         HStack(spacing: 0) {
             Text(CalendarViewModel.formattedTime(now))
-                .font(.caption)
+                .font(font)
                 .minimumScaleFactor(0.1)
                 .foregroundColor(.red)
                 .padding(.horizontal, 3)

@@ -7,6 +7,35 @@
 
 import SwiftUI
 
+public struct  EventColumnFontDicKey: EnvironmentKey {
+    public typealias Value = [Date: Font]
+    static public var defaultValue: Value = [:]
+}
+
+public struct  EventColumnDefaultFontKey: EnvironmentKey {
+    public typealias Value = Font
+    static public var defaultValue: Value = .body
+}
+
+extension EnvironmentValues {
+    public var eventColumnFontDic: [Date: Font] {
+        get {
+            self[EventColumnFontDicKey.self]
+        }
+        set {
+            self[EventColumnFontDicKey.self] = newValue
+        }
+    }
+    public var eventColumnDefaultFont: Font {
+        get {
+            self[EventColumnDefaultFontKey.self]
+        }
+        set {
+            self[EventColumnDefaultFontKey.self] = newValue
+        }
+    }
+}
+
 struct EventColumn: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date

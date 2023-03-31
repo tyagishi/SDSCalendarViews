@@ -9,6 +9,8 @@ import SwiftUI
 import os
 
 struct HourBlock: View {
+    @Environment(\.eventColumnFontDic) var fontDic: [Date: Font]
+    @Environment(\.eventColumnDefaultFont) var defaultFont: Font
     @ObservedObject var viewModel: CalendarViewModel
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "HourBlock")
     let blockHourRange: Range<Date>
@@ -32,7 +34,7 @@ struct HourBlock: View {
                         .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
                         .overlay {
                             Text(event.title)
-                                .font(.footnote).bold()
+                                .font(appropriateFont)
                                 .padding(.leading, 5).padding(2)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         }
@@ -47,6 +49,13 @@ struct HourBlock: View {
                 }
             }
         }
+    }
+
+    var appropriateFont: Font {
+        if let key = fontDic.keys.first(where: { Calendar.current.isDate($0, inSameDayAs: date) }) {
+            return fontDic[key, default: defaultFont]
+        }
+        return defaultFont
     }
 
     func eventWidth(_ columnWidth: CGFloat) -> CGFloat {
