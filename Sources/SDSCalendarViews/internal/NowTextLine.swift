@@ -7,36 +7,20 @@
 
 import SwiftUI
 
-public struct NowLineFontKey: EnvironmentKey {
-    public typealias Value = Font
-    static public var defaultValue: Font = .body
-}
-
-extension EnvironmentValues {
-    public var nowLineFont: Font {
-        get {
-            self[NowLineFontKey.self]
-        }
-        set {
-            self[NowLineFontKey.self] = newValue
-        }
-    }
-}
-
 struct NowTextLine: View {
-    @Environment(\.nowLineFont) var font: Font
+    @Environment(\.calendarViewFontDic) var fontDic
+    @Environment(\.calendarViewWidthDic) var widthDic
     let now: Date
-    let labelWidth: CGFloat
 
     var body: some View {
         HStack(spacing: 0) {
             Text(CalendarViewModel.formattedTime(now))
-                .font(font)
+                .font(fontDic["NowLine"])
                 .minimumScaleFactor(0.1)
                 .foregroundColor(.red)
                 .padding(.horizontal, 3)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .frame(width: labelWidth)
+                .frame(width: widthDic["TimeColumn"])
             VStack(spacing: 0) {
                 Divider().background(.red)
             }
@@ -46,6 +30,6 @@ struct NowTextLine: View {
 
 struct NowTextLine_Previews: PreviewProvider {
     static var previews: some View {
-        NowTextLine(now: Date(), labelWidth: 280)
+        NowTextLine(now: Date())
     }
 }

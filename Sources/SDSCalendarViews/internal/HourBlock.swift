@@ -7,9 +7,11 @@
 
 import SwiftUI
 import os
+import SDSSwiftExtension
 
 struct HourBlock: View {
-    @Environment(\.eventColumnFontDic) var fontDic: DictionaryWithDefault<Date, Font>
+    @Environment(\.calendarViewFontDic) var fontDic
+
     @ObservedObject var viewModel: CalendarViewModel
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "HourBlock")
     let blockHourRange: Range<Date>
@@ -26,14 +28,14 @@ struct HourBlock: View {
     var body: some View {
         let blockStartInterval = blockHourRange.lowerBound.timeIntervalSinceReferenceDate
         ZStack(alignment: .top) {
-            VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top)
+            VStack { Divider() }.frame(maxHeight: .infinity, alignment: .top) // divider between prev-hour
             GeometryReader { eventAreaGeom in
                 ForEach(viewModel.eventsFor(date, allDayEvent: false).filter({ blockHourRange.contains($0.midDate) })) { event in
                     RoundedRectangle(cornerRadius: 3).fill(event.color.opacity(0.3))
                         .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
                         .overlay {
                             Text(event.title)
-                                .font(fontDic[date])
+                                .font(fontDic[CalendarViewModel.formattedDate(date)])
                                 .padding(.leading, 5).padding(2)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         }
