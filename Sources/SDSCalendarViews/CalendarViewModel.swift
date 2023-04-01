@@ -225,6 +225,9 @@ extension CalendarViewModel {
 
 // MARK: formatter
 extension CalendarViewModel {
+    static public func key(for date: Date) -> String {
+        Self.formattedDate(date)
+    }
     static public func formattedDate(_ date: Date) -> String {
         let dateComp = Calendar.current.dateComponents([.year, .month, .day], from: date)
         // swiftlint:disable:next force_unwrapping
