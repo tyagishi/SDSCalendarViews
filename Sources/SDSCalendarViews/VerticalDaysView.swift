@@ -7,7 +7,25 @@
 
 import SwiftUI
 
+public struct  VerticalDaysColumnWidthDicKey: EnvironmentKey {
+    // note use "Date.distantPast" for TimeColumn width
+    public typealias Value = [Date: CGFloat]
+    static public var defaultValue: Value = [:]
+}
+
+extension EnvironmentValues {
+    public var verticalDaysColumnWidthDicKey: [Date: CGFloat] {
+        get {
+            self[VerticalDaysColumnWidthDicKey.self]
+        }
+        set {
+            self[VerticalDaysColumnWidthDicKey.self] = newValue
+        }
+    }
+}
+
 public struct VerticalDaysView: View {
+    @Environment(\.verticalDaysColumnWidthDicKey) var widthDic
     @ObservedObject var viewModel: CalendarViewModel
     let dayRange: Range<Date> // days for display like 2022/Jan/01..<2022/Jan/08 (no care about time)
     let now: Date
@@ -25,10 +43,16 @@ public struct VerticalDaysView: View {
                 let labelWidth = geom.size.width / columnNum
                 let hourHeight = geom.size.height / (CGFloat(viewModel.endHour - viewModel.startHour))
                 HStack(spacing: 0) {
-                    TimeColumn(viewModel: viewModel, date: dayRange.lowerBound, labelWidth: labelWidth, hourHeight: hourHeight)
+                    // timeColumn (1 for whole view)
+                    VStack {
+                        Rectangle().fill(.blue).frame(CGSize(width: 50, height: 50))
+                        TimeColumn(viewModel: viewModel, date: dayRange.lowerBound, labelWidth: labelWidth, hourHeight: hourHeight)
+                    }
+                    // event columns (1 for each day)
                     ForEach(viewModel.eachDayRange(dayRange), id: \.self) { dayStart in
-                        Divider().foregroundColor(.black)
+                        Divider().foregroundColor(.white)
                         VStack {
+                            EventColumnHeader(date: dayStart).frame(CGSize(width: 50, height: 50))
                             EventColumn(viewModel: viewModel, date: dayStart, hourHeight: hourHeight)
                         }
                     }
@@ -54,13 +78,9 @@ public struct VerticalDaysView: View {
 }
 
 extension View {
-    public func eventColumnFontDic(_ fontDic: [Date: Font]) -> some View {
+    public func eventColumnFontDic(_ fontDic: DictionaryWithDefault<Date, Font>) -> some View {
         self
             .environment(\.eventColumnFontDic, fontDic)
-    }
-    public func eventColumnDefaultFont(_ font: Font) -> some View {
-        self
-            .environment(\.eventColumnDefaultFont, font)
     }
     public func timeColumnFont(_ font: Font) -> some View {
         self
@@ -76,5 +96,18 @@ struct DayRangeView_Previews: PreviewProvider {
     static var previews: some View {
         VerticalDaysView(CalendarViewModel.example(),
                          dayRange: CalendarViewModel.oneWeekFrom(Date()), now: Date())
+    }
+}
+
+public struct EventColumnHeader: View {
+    @Environment(\.eventColumnFontDic) var fontDic: DictionaryWithDefault<Date, Font>
+    let date: Date
+
+    public init(date: Date) {
+        self.date = date
+    }
+
+    public var body: some View {
+        Text(date.formatted(.dateTime.month(.narrow).day())).font(fontDic[date])
     }
 }

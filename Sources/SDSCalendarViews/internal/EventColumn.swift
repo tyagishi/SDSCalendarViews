@@ -7,31 +7,36 @@
 
 import SwiftUI
 
-public struct  EventColumnFontDicKey: EnvironmentKey {
-    public typealias Value = [Date: Font]
-    static public var defaultValue: Value = [:]
+public struct DictionaryWithDefault<Key: Hashable, Value> {
+    var dictionary: [Key: Value]
+    var defaultValue: Value
+
+    public init(_ dic: [Key: Value] = [:], defaultValue: Value) {
+        self.dictionary = dic
+        self.defaultValue = defaultValue
+    }
+    subscript(key: Key) -> Value {
+        get {
+            dictionary[key, default: defaultValue]
+        }
+        set(newValue) {
+            dictionary[key] = newValue
+        }
+    }
 }
 
-public struct  EventColumnDefaultFontKey: EnvironmentKey {
-    public typealias Value = Font
-    static public var defaultValue: Value = .body
+public struct  EventColumnFontDicKey: EnvironmentKey {
+    public typealias Value = DictionaryWithDefault<Date, Font>
+    static public var defaultValue: Value = DictionaryWithDefault<Date, Font>(defaultValue: .body)
 }
 
 extension EnvironmentValues {
-    public var eventColumnFontDic: [Date: Font] {
+    public var eventColumnFontDic: DictionaryWithDefault<Date, Font> {
         get {
             self[EventColumnFontDicKey.self]
         }
         set {
             self[EventColumnFontDicKey.self] = newValue
-        }
-    }
-    public var eventColumnDefaultFont: Font {
-        get {
-            self[EventColumnDefaultFontKey.self]
-        }
-        set {
-            self[EventColumnDefaultFontKey.self] = newValue
         }
     }
 }
