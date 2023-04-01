@@ -228,6 +228,11 @@ extension CalendarViewModel {
     static public func key(for date: Date) -> String {
         Self.formattedDate(date)
     }
+    static public func formattedMMDD(_ date: Date) -> String {
+        let dateComp = Calendar.current.dateComponents([.month, .day], from: date)
+        // swiftlint:disable:next force_unwrapping
+        return String(format: "%02d/%02d", dateComp.month!, dateComp.day!)
+    }
     static public func formattedDate(_ date: Date) -> String {
         let dateComp = Calendar.current.dateComponents([.year, .month, .day], from: date)
         // swiftlint:disable:next force_unwrapping

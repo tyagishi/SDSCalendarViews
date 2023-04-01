@@ -8,6 +8,11 @@
 import SwiftUI
 
 public struct DayEventBlock: View {
+    @Environment(\.calendarViewFontDic) var fontDic
+    @Environment(\.calendarViewWidthDic) var widthDic
+    @Environment(\.calendarViewHeightDic) var heightDic
+    @Environment(\.calendarViewAlignmentDic) var alignmentDic
+
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
 
@@ -16,14 +21,18 @@ public struct DayEventBlock: View {
         self.date = date
     }
     public var body: some View {
+        let key = CalendarDicKey.dayEvent.rawValue
         VStack(spacing: 0) {
             ForEach(viewModel.allDayEventFor(date)) { allDayEvent in
                 Text(" " + allDayEvent.title)
                     .lineLimit(1).minimumScaleFactor(0.1)
+                    .font(fontDic[key])
                     .foregroundColor(allDayEvent.color)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[key])
+        .frame(width: widthDic[key], height: heightDic[key])
+
     }
 }
 

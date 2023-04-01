@@ -26,20 +26,28 @@ extension View {
 
 }
 
+public enum CalendarDicKey: String, RawRepresentable {
+    case timeColumn = "TimeColumn" // for width, font, alignment
+    case dayLabel = "DayLabel"     // for height, font, alignment
+    case nowLine = "NowLine"       // for font
+    case hourBlock = "HourBlock"   // for height
+    case dayEvent = "DayEvent"     // for font, height, alignment
+}
+
 public struct CalendarViewFontDicKey: EnvironmentKey {
     public typealias Value = DictionaryWithDefault<String, Font>
-    // key: "TimeColumn", "DayLabel", "NowLine", "2023/01/12"
+    // key: "TimeColumn", "DayLabel", "NowLine", "2023/01/12", "DayEvent"
     static public var defaultValue: Value = .init(defaultValue: .body)
 }
 
 public struct CalendarViewWidthDicKey: EnvironmentKey {
-    // key might be "TimeColumn", "DateCell" or "2023/01/23"
+    // key might be "TimeColumn" or "2023/01/23"
     public typealias Value = DictionaryWithDefault<String, CGFloat>
     static public var defaultValue: Value = .init(defaultValue: 80)
 }
 
 public struct CalendarViewHeightDicKey: EnvironmentKey {
-    // key might be "HourBlock"
+    // key might be "HourBlock", "DayEvent"
     public typealias Value = DictionaryWithDefault<String, CGFloat>
     static public var defaultValue: Value = .init(defaultValue: 50)
 }

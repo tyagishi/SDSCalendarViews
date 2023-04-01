@@ -17,14 +17,16 @@ struct TimeColumn: View {
     let date: Date
 
     var body: some View {
+        let tcKey = CalendarDicKey.timeColumn.rawValue
+        let hgtKey = CalendarDicKey.hourBlock.rawValue
         VStack(spacing: 0) {
             ForEach(viewModel.hourRanges(date), id: \.self) { hour in
                 Text(CalendarViewModel.formattedTime(hour.lowerBound)).minimumScaleFactor(0.1)
                     .monospacedDigit()
-                    .font(fontDic["TimeColumn"])
+                    .font(fontDic[tcKey])
                     .padding(.leading, 4)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic["TimeColumn"])
-                    .frame(width: widthDic["TimeColumn"], height: heightDic["HourBlock"])
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[tcKey])
+                    .frame(width: widthDic[tcKey], height: heightDic[hgtKey])
             }
         }
     }

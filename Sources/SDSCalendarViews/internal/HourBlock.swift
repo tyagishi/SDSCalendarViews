@@ -14,6 +14,7 @@ struct HourBlock: View {
 
     @ObservedObject var viewModel: CalendarViewModel
     let logger = Logger(subsystem: "com.smalldesksoftware.CalendarViews", category: "HourBlock")
+
     let blockHourRange: Range<Date>
     let date: Date
 
