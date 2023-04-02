@@ -23,6 +23,8 @@ public struct EventColumnHeader<T: View>: View {
     }
     public var body: some View {
         label.font(fontDic[CalendarViewModel.formattedDate(date)])
+            .minimumScaleFactor(0.1)
+            .lineLimit(1)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic["DayLabel"])
             .frame(width: widthDic[CalendarViewModel.formattedDate(date)], height: heightDic["DayLabel"])
     }

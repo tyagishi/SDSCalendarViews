@@ -9,9 +9,13 @@ import Foundation
 import SwiftUI
 
 public struct ScrollableVerticalDaysView: View {
+    @Environment(\.calendarViewHeightDic) var heightDic
     @ObservedObject var viewModel: CalendarViewModel
     let dayRange: Range<Date> // days for display like 2022/Jan/01..<2022/Jan/08 (no care about time)
     let now: Date
+
+    let dayLabelKey = CalendarDicKey.dayLabel.rawValue
+    let eventBlockKey = CalendarDicKey.dayEvent.rawValue
 
     public init(_ viewModel: CalendarViewModel, dayRange: Range<Date>, now: Date) {
         self.viewModel = viewModel
@@ -24,10 +28,14 @@ public struct ScrollableVerticalDaysView: View {
             HStack(spacing: 0) {
                 TimeColumnHeader()
                 ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
+//                    Divider()
+                    Divider().frame(height: heightDic[dayLabelKey] + heightDic[eventBlockKey])
                     VStack(spacing: 0) {
                         EventColumnHeader(date: date, label: { Text(CalendarViewModel.formattedMMDD(date)) })
+                        Divider()
                         DayEventBlock(viewModel, date: date)
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }}, content: {
                 VerticalEventColumns(viewModel, dayRange: dayRange, now: Date())
