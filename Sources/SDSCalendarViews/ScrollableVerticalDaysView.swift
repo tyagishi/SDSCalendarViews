@@ -22,13 +22,11 @@ public struct ScrollableVerticalDaysView: View {
     public var body: some View {
         ScrollViewEx(header: {
             HStack(spacing: 0) {
-                TimeColumnHeader().border(.red)
+                TimeColumnHeader()
                 ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
                     VStack(spacing: 0) {
                         EventColumnHeader(date: date, label: { Text(CalendarViewModel.formattedMMDD(date)) })
-                            .border(.red)
                         DayEventBlock(viewModel, date: date)
-                            .border(.red)
                     }
                 }
             }}, content: {

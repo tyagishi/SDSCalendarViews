@@ -23,7 +23,6 @@ struct EventColumn: View {
                     .id(CalendarViewModel.formattedHour(hourRange.lowerBound))
             }
         }
-//        .frame(width: widthDic[CalendarViewModel.formattedDate(date)])
     }
 }
 
