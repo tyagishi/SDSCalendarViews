@@ -18,7 +18,7 @@ struct HourBlock: View {
     let blockHourRange: Range<Date>
     let date: Date
 
-    let eventOffset: CGFloat = 10
+//    let eventOffset: CGFloat = 10
     @State private var eventsWidth: CGFloat = 10
 
     init(_ viewModel: CalendarViewModel, _ date: Date, _ blockHourRange: Range<Date>) {
@@ -82,6 +82,7 @@ struct HourBlock: View {
     }
 
     func eventOffsetX(event: Event, _ columnWidth: CGFloat) -> CGFloat {
+        let eventOffset: CGFloat = min(10.0, columnWidth * 0.1)
         if let index = viewModel.events.firstIndex(where: { event.id == $0.id }) {
             let offset = columnOffset(eventWidth(columnWidth))
             return eventOffset + CGFloat(index) * offset
