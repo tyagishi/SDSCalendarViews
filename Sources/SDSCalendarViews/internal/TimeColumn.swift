@@ -16,9 +16,10 @@ struct TimeColumn: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
 
+    let tcKey = CalendarDicKey.timeColumn.rawValue
+    let hgtKey = CalendarDicKey.hourBlock.rawValue
+
     var body: some View {
-        let tcKey = CalendarDicKey.timeColumn.rawValue
-        let hgtKey = CalendarDicKey.hourBlock.rawValue
         VStack(spacing: 0) {
             ForEach(viewModel.hourRanges(date), id: \.self) { hour in
                 Text(CalendarViewModel.formattedTime(hour.lowerBound)).minimumScaleFactor(0.1)

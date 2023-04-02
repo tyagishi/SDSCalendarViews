@@ -12,15 +12,18 @@ struct NowTextLine: View {
     @Environment(\.calendarViewWidthDic) var widthDic
     let now: Date
 
+    let nlKey = CalendarDicKey.nowLine.rawValue
+    let tcKey = CalendarDicKey.timeColumn.rawValue
+
     var body: some View {
         HStack(spacing: 0) {
             Text(CalendarViewModel.formattedTime(now))
-                .font(fontDic["NowLine"])
+                .font(fontDic[nlKey])
                 .minimumScaleFactor(0.1)
                 .foregroundColor(.red)
                 .padding(.horizontal, 3)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .frame(width: widthDic["TimeColumn"])
+                .frame(width: widthDic[tcKey])
             VStack(spacing: 0) {
                 Divider().background(.red)
             }

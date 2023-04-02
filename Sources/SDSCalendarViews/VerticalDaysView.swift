@@ -25,7 +25,7 @@ public struct VerticalDaysView: View {
         HStack(spacing: 0) {
             // timeColumn (1 for whole view)
             VStack(spacing: 0) {
-                Rectangle().fill(.blue).frame(width: widthDic["TimeColumn"], height: heightDic["DayLabel"])
+                TimeColumnHeader()
                 TimeColumn(viewModel: viewModel, date: dayRange.lowerBound)
             }
             // event columns (1 for each day)
@@ -37,7 +37,7 @@ public struct VerticalDaysView: View {
                     EventColumn(viewModel: viewModel, date: date)
                 }
             }
-        }.fixedSize().clipped()
+        }
         .overlay {
             NowTextLine(now: now)
                 .offset(y: offsetY(now: now, oneHourHeight: heightDic["HourBlock"]))
@@ -60,25 +60,5 @@ struct DayRangeView_Previews: PreviewProvider {
     static var previews: some View {
         VerticalDaysView(CalendarViewModel.example(),
                          dayRange: CalendarViewModel.oneWeekFrom(Date()), now: Date())
-    }
-}
-
-public struct EventColumnHeader<T: View>: View {
-    @Environment(\.calendarViewFontDic) var fontDic
-    @Environment(\.calendarViewWidthDic) var widthDic
-    @Environment(\.calendarViewHeightDic) var heightDic
-    @Environment(\.calendarViewAlignmentDic) var alignmentDic
-
-    let date: Date
-    let label: T
-
-    public init(date: Date, label: () -> T) {
-        self.date = date
-        self.label = label()
-    }
-    public var body: some View {
-        label.font(fontDic[CalendarViewModel.formattedDate(date)])
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic["DayLabel"])
-            .frame(width: widthDic[CalendarViewModel.formattedDate(date)], height: heightDic["DayLabel"])
     }
 }

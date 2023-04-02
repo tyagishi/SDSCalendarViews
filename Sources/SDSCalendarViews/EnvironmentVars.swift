@@ -14,7 +14,7 @@ extension View {
     public func calendarViewFontDic(_ fontDic: DictionaryWithDefault<String, Font>) -> some View {
         self.environment(\.calendarViewFontDic, fontDic)
     }
-    public func calendarViewWidthDic(_ widthDic: DictionaryWithDefault<String, CGFloat>) -> some View {
+    public func calendarViewWidthDic(_ widthDic: [String: CGFloat]) -> some View {
         self.environment(\.calendarViewWidthDic, widthDic)
     }
     public func calendarViewHeightDic(_ heightDic: DictionaryWithDefault<String, CGFloat>) -> some View {
@@ -42,8 +42,8 @@ public struct CalendarViewFontDicKey: EnvironmentKey {
 
 public struct CalendarViewWidthDicKey: EnvironmentKey {
     // key might be "TimeColumn" or "2023/01/23"
-    public typealias Value = DictionaryWithDefault<String, CGFloat>
-    static public var defaultValue: Value = .init(defaultValue: 80)
+    public typealias Value = [String: CGFloat]
+    static public var defaultValue: Value = [:]
 }
 
 public struct CalendarViewHeightDicKey: EnvironmentKey {
@@ -68,7 +68,7 @@ extension EnvironmentValues {
         }
     }
 
-    public var calendarViewWidthDic: DictionaryWithDefault<String, CGFloat> {
+    public var calendarViewWidthDic: [String: CGFloat] {
         get {
             self[CalendarViewWidthDicKey.self]
         }

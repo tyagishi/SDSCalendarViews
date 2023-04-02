@@ -13,9 +13,14 @@ import Combine
 public struct DayView: View {
     @Environment(\.calendarViewWidthDic) var widthDic
     @Environment(\.calendarViewHeightDic) var heightDic
+    @Environment(\.calendarViewAlignmentDic) var alignmentDic
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
     let now: Date
+
+    let dayLabelKey = CalendarDicKey.dayLabel.rawValue
+    let timeColumnKey = CalendarDicKey.timeColumn.rawValue
+    let hourBlockKey = CalendarDicKey.hourBlock.rawValue
 
     public init( _ viewModel: CalendarViewModel, date: Date, now: Date) {
         self.viewModel = viewModel
@@ -25,12 +30,10 @@ public struct DayView: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                Rectangle().fill(.clear)
-                    .frame(width: widthDic["TimeColumn"], height: 0.1)
+                TimeColumnHeader()
                 EventColumnHeader(date: date,
-                                  label: { Text(date.formatted(.dateTime.month(.twoDigits).day(.twoDigits))).frame(maxWidth: .infinity, alignment: .center) })
-                .frame(width: widthDic[CalendarViewModel.formattedDate(date)])
-//                EventColumnHeader(date: date, title: date.formatted(Date.FormatStyle.dateTime.day(.twoDigits).month(.twoDigits)))
+                                  label: { Text(date.formatted(.dateTime.month(.twoDigits).day(.twoDigits)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[dayLabelKey]).border(.green) })
             }
             HStack(spacing: 0) {
                 TimeColumn(viewModel: viewModel, date: date)
@@ -39,7 +42,7 @@ public struct DayView: View {
             .overlay {
                 if date.dayLongRange.contains(now) {
                     NowTextLine(now: now)
-                        .offset(y: offsetY(now: now, oneHourHeight: heightDic["HourBlock"]))
+                        .offset(y: offsetY(now: now, oneHourHeight: heightDic[hourBlockKey]))
                 }
             }
         }

@@ -41,16 +41,3 @@ public struct VerticalEventColumns: View {
         return diffInDot// - oneHourHeight * 0.5
     }
 }
-
-public struct TimeColumnHeader: View {
-    @Environment(\.calendarViewFontDic) var fontDic
-    @Environment(\.calendarViewWidthDic) var widthDic
-    @Environment(\.calendarViewHeightDic) var heightDic
-    @Environment(\.calendarViewAlignmentDic) var alignmentDic
-
-    public init() { }
-    public var body: some View {
-        Color.clear
-            .frame(width: widthDic["TimeColumn"], height: heightDic["DayLabel"])
-    }
-}
