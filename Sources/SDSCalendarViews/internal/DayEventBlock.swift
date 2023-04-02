@@ -16,12 +16,13 @@ public struct DayEventBlock: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
 
+    let key = CalendarDicKey.dayEvent.rawValue
+
     public init( _ viewModel: CalendarViewModel, date: Date) {
         self.viewModel = viewModel
         self.date = date
     }
     public var body: some View {
-        let key = CalendarDicKey.dayEvent.rawValue
         VStack(spacing: 0) {
             ForEach(viewModel.allDayEventFor(date)) { allDayEvent in
                 Text(" " + allDayEvent.title)
@@ -31,7 +32,7 @@ public struct DayEventBlock: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[key])
-        .frame(width: widthDic[key], height: heightDic[key])
+        .frame(width: widthDic[CalendarViewModel.key(for: date)], height: heightDic[key])
 
     }
 }

@@ -25,9 +25,10 @@ public struct VerticalEventColumns: View {
     public var body: some View {
         HStack(spacing: 0) {
             TimeColumn(viewModel: viewModel, date: now)
-            ForEach(viewModel.eachDayRange(dayRange), id: \.self) { dayStart in
+            ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
                 Divider().foregroundColor(.white)
-                EventColumn(viewModel: viewModel, date: dayStart)
+                EventColumn(viewModel: viewModel, date: date)
+                    .frame(width: widthDic[CalendarViewModel.key(for: date)])
             }
         }
         .overlay {
