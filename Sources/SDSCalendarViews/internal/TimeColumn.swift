@@ -23,6 +23,7 @@ struct TimeColumn: View {
         VStack(spacing: 0) {
             ForEach(viewModel.hourRanges(date), id: \.self) { hour in
                 Text(CalendarViewModel.formattedTime(hour.lowerBound)).minimumScaleFactor(0.1)
+                    .lineLimit(1)
                     .monospacedDigit()
                     .font(fontDic[tcKey])
                     .padding(.leading, 4)
