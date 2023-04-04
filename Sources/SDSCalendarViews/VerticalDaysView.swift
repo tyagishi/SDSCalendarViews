@@ -25,7 +25,8 @@ public struct VerticalDaysView: View {
         HStack(spacing: 0) {
             // timeColumn (1 for whole view)
             VStack(spacing: 0) {
-                TimeColumnHeader()
+                TimeColumnLabel()
+                TimeColumnEventLabel()
                 TimeColumn(viewModel: viewModel, date: dayRange.lowerBound)
             }
             // event columns (1 for each day)
@@ -34,6 +35,7 @@ public struct VerticalDaysView: View {
                 VStack(spacing: 0) {
                     EventColumnHeader(date: date,
                                       label: { Text( date.formatted(.dateTime.month(.twoDigits).day(.twoDigits))) })
+                    DayEventBlock(viewModel, date: date)
                     EventColumn(viewModel: viewModel, date: date)
                 }
             }

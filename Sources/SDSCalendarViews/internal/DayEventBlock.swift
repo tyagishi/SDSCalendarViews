@@ -33,7 +33,6 @@ public struct DayEventBlock: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[key])
         .frame(width: widthDic[CalendarViewModel.key(for: date)], height: heightDic[key])
-
     }
 }
 

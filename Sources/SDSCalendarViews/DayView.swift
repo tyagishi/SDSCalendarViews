@@ -30,10 +30,15 @@ public struct DayView: View {
     public var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
-                TimeColumnHeader()
+                TimeColumnLabel()
                 EventColumnHeader(date: date,
                                   label: { Text(date.formatted(.dateTime.month(.twoDigits).day(.twoDigits)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[dayLabelKey]).border(.green) })
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[dayLabelKey])
+                })
+            }
+            HStack(spacing: 0) {
+                TimeColumnEventLabel()
+                DayEventBlock(viewModel, date: date)
             }
             HStack(spacing: 0) {
                 TimeColumn(viewModel: viewModel, date: date)

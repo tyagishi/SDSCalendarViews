@@ -26,7 +26,7 @@ public struct ScrollableVerticalDaysView: View {
     public var body: some View {
         ScrollViewEx(header: {
             HStack(spacing: 0) {
-                TimeColumnHeader()
+                TimeColumnLabel()
                 ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
 //                    Divider()
                     Divider().frame(height: heightDic[dayLabelKey] + heightDic[eventBlockKey])
