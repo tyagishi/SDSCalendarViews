@@ -16,19 +16,16 @@ struct TimeColumn: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
 
-    let tcKey = CalendarDicKey.timeColumn.rawValue
-    let hgtKey = CalendarDicKey.hourBlock.rawValue
-
     var body: some View {
         VStack(spacing: 0) {
             ForEach(viewModel.hourRanges(date), id: \.self) { hour in
                 Text(CalendarViewModel.formattedTime(hour.lowerBound)).minimumScaleFactor(0.1)
                     .lineLimit(1)
                     .monospacedDigit()
-                    .font(fontDic[tcKey])
+                    .font(fontDic[.timeColumn])
                     .padding(.leading, 4)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[tcKey])
-                    .frame(width: widthDic[tcKey], height: heightDic[hgtKey])
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[.timeColumn])
+                    .frame(width: widthDic[.timeColumn], height: heightDic[.hourBlock])
             }
         }
     }

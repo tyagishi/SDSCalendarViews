@@ -19,7 +19,7 @@ struct EventColumn: View {
             ForEach(viewModel.hourRanges(date), id: \.self) { hourRange in
                 HourBlock(viewModel, date, hourRange)
                     .frame(maxWidth: .infinity)
-                    .frame(height: heightsDic["HourBlock"])
+                    .frame(height: heightsDic[.hourBlock])
                     .id(CalendarViewModel.formattedHour(hourRange.lowerBound))
             }
         }

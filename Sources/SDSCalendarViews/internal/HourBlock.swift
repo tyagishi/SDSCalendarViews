@@ -36,7 +36,7 @@ struct HourBlock: View {
                         .frame(width: eventWidth(eventAreaGeom.size.width), height: eventHeight(event, eventAreaGeom.size.height))
                         .overlay {
                             Text(event.title)
-                                .font(fontDic[CalendarViewModel.key(for: date)])
+                                .font(fontDic[.day(date.formatted(.cvKeyStyle))])
                                 .padding(.leading, 5).padding(2)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         }

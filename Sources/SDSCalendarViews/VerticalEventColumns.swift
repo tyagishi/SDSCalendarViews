@@ -28,12 +28,12 @@ public struct VerticalEventColumns: View {
             ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
                 Divider().foregroundColor(.white)
                 EventColumn(viewModel: viewModel, date: date)
-                    .frame(width: widthDic[CalendarViewModel.key(for: date)])
+                    .frame(width: widthDic[.day(date.formatted(.cvKeyStyle))])
             }
         }
         .overlay(alignment: .topLeading) {
             NowTextLine(now: now)
-                .offset(y: offsetY(now: now, oneHourHeight: heightDic["HourBlock"]))
+                .offset(y: offsetY(now: now, oneHourHeight: heightDic[.hourBlock]))
         }
     }
     func offsetY(now: Date, oneHourHeight: CGFloat) -> CGFloat {

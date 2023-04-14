@@ -18,10 +18,6 @@ public struct DayView: View {
     let date: Date
     let now: Date
 
-    let dayLabelKey = CalendarDicKey.dayLabel.rawValue
-    let timeColumnKey = CalendarDicKey.timeColumn.rawValue
-    let hourBlockKey = CalendarDicKey.hourBlock.rawValue
-
     public init( _ viewModel: CalendarViewModel, date: Date, now: Date) {
         self.viewModel = viewModel
         self.date = date
@@ -44,7 +40,7 @@ public struct DayView: View {
             .overlay {
                 if date.dayLongRange.contains(now) {
                     NowTextLine(now: now)
-                        .offset(y: offsetY(now: now, oneHourHeight: heightDic[hourBlockKey]))
+                        .offset(y: offsetY(now: now, oneHourHeight: heightDic[.hourBlock]))
                 }
             }
         }

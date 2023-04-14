@@ -38,10 +38,10 @@ public struct EventColumnHeader: View {
 //        let text = date.formatted(formatStyleDic[.])
         let formatStyle = formatStyleDic[firstDayFlag ? .leadDayLabel : .restDaysLabel] ??  .dateTime.month(.twoDigits).day(.twoDigits)
         let text = date.formatted(formatStyle)
-        Text(text).font(fontDic[CalendarViewModel.formattedDate(date)])
+        Text(text).font(fontDic[.day(date.formatted(.cvKeyStyle))])
             .minimumScaleFactor(0.1)
             .lineLimit(1)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic["DayLabel"])
-            .frame(width: widthDic[CalendarViewModel.formattedDate(date)], height: heightDic["DayLabel"])
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[.dayLabel])
+            .frame(width: widthDic[.day(date.formatted(.cvKeyStyle))], height: heightDic[.dayLabel])
     }
 }

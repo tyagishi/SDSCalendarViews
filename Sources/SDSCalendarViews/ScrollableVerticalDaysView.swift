@@ -14,9 +14,6 @@ public struct ScrollableVerticalDaysView: View {
     let dayRange: Range<Date> // days for display like 2022/Jan/01..<2022/Jan/08 (no care about time)
     let now: Date
 
-    let dayLabelKey = CalendarDicKey.dayLabel.rawValue
-    let eventBlockKey = CalendarDicKey.dayEvent.rawValue
-
     public init(_ viewModel: CalendarViewModel, dayRange: Range<Date>, now: Date) {
         self.viewModel = viewModel
         self.dayRange = dayRange
@@ -29,7 +26,7 @@ public struct ScrollableVerticalDaysView: View {
                 TimeColumnLabel()
                 ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
 //                    Divider()
-                    Divider().frame(height: heightDic[dayLabelKey] + heightDic[eventBlockKey])
+                    Divider().frame(height: heightDic[.dayLabel] + heightDic[.dayEvent])
                     VStack(spacing: 0) {
                         EventColumnHeader(date: date, range: dayRange, today: now)
                         Divider()

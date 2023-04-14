@@ -12,14 +12,10 @@ public struct TimeColumnLabel: View {
     @Environment(\.calendarViewWidthDic) var widthDic
     @Environment(\.calendarViewHeightDic) var heightDic
 
-    let tcKey = CalendarDicKey.timeColumn.rawValue
-    let dlKey = CalendarDicKey.dayLabel.rawValue
-    let deKey = CalendarDicKey.dayEvent.rawValue
-
     public init() { }
     public var body: some View {
         Color.clear
-            .frame(width: widthDic[tcKey], height: heightDic[dlKey])
+            .frame(width: widthDic[.timeColumn], height: heightDic[.dayLabel])
     }
 }
 
@@ -27,13 +23,9 @@ public struct TimeColumnEventLabel: View {
     @Environment(\.calendarViewWidthDic) var widthDic
     @Environment(\.calendarViewHeightDic) var heightDic
 
-    let tcKey = CalendarDicKey.timeColumn.rawValue
-    let dlKey = CalendarDicKey.dayLabel.rawValue
-    let deKey = CalendarDicKey.dayEvent.rawValue
-
     public init() { }
     public var body: some View {
         Color.clear
-            .frame(width: widthDic[tcKey], height: heightDic[deKey])
+            .frame(width: widthDic[.timeColumn], height: heightDic[.dayEvent])
     }
 }

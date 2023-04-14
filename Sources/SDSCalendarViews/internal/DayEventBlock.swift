@@ -16,8 +16,6 @@ public struct DayEventBlock: View {
     @ObservedObject var viewModel: CalendarViewModel
     let date: Date
 
-    let key = CalendarDicKey.dayEvent.rawValue
-
     public init( _ viewModel: CalendarViewModel, date: Date) {
         self.viewModel = viewModel
         self.date = date
@@ -27,12 +25,12 @@ public struct DayEventBlock: View {
             ForEach(viewModel.allDayEventFor(date)) { allDayEvent in
                 Text(" " + allDayEvent.title)
                     .lineLimit(1).minimumScaleFactor(0.1)
-                    .font(fontDic[key])
+                    .font(fontDic[.dayEvent])
                     .foregroundColor(allDayEvent.color)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[key])
-        .frame(width: widthDic[CalendarViewModel.key(for: date)], height: heightDic[key])
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[.dayEvent])
+        .frame(width: widthDic[.day(date.formatted(.cvKeyStyle))], height: heightDic[.dayEvent])
     }
 }
 

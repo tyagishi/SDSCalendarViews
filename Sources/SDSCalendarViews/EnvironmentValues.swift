@@ -11,16 +11,16 @@ import SwiftUI
 
 // MARK: font/size/alignment control
 extension View {
-    public func calendarViewFontDic(_ fontDic: DictionaryWithDefault<String, Font>) -> some View {
+    public func calendarViewFontDic(_ fontDic: DictionaryWithDefault<CalendarDicKey, Font>) -> some View {
         self.environment(\.calendarViewFontDic, fontDic)
     }
-    public func calendarViewWidthDic(_ widthDic: [String: CGFloat]) -> some View {
+    public func calendarViewWidthDic(_ widthDic: [CalendarDicKey: CGFloat]) -> some View {
         self.environment(\.calendarViewWidthDic, widthDic)
     }
-    public func calendarViewHeightDic(_ heightDic: DictionaryWithDefault<String, CGFloat>) -> some View {
+    public func calendarViewHeightDic(_ heightDic: DictionaryWithDefault<CalendarDicKey, CGFloat>) -> some View {
         self.environment(\.calendarViewHeightDic, heightDic)
     }
-    public func calendarViewAlignmentDic(_ alignmentDic: DictionaryWithDefault<String, Alignment>) -> some View {
+    public func calendarViewAlignmentDic(_ alignmentDic: DictionaryWithDefault<CalendarDicKey, Alignment>) -> some View {
         self.environment(\.calendarViewAlignmentDic, alignmentDic)
     }
     public func calendarViewFormatStyleDic(_ formatStyleDic: [CalendarFormatStyleKey: Date.FormatStyle]) -> some View {
@@ -35,12 +35,19 @@ public enum CalendarFormatStyleKey: String, RawRepresentable {
     case timeLabel = "TimeLabel"
 }
 
-public enum CalendarDicKey: String, RawRepresentable {
-    case timeColumn = "TimeColumn" // for width, font, alignment
-    case dayLabel = "DayLabel"     // for height, font, alignment
-    case nowLine = "NowLine"       // for font
-    case hourBlock = "HourBlock"   // for height
-    case dayEvent = "DayEvent"     // for font, height, alignment
+public enum CalendarDicKey: Hashable { // }: RawRepresentable {
+    case timeColumn// = "TimeColumn" // for width, font, alignment
+    case dayLabel// = "DayLabel"     // for height, font, alignment
+    case nowLine// = "NowLine"       // for font
+    case hourBlock// = "HourBlock"   // for height
+    case dayEvent// = "DayEvent"     // for font, height, alignment
+    case day(_ date: String)
+}
+
+extension FormatStyle where Self == Date.FormatStyle {
+    static public var cvKeyStyle: Date.FormatStyle {
+        Date.FormatStyle.dateTime.year().month().day()
+    }
 }
 
 public struct CalendarViewFormatStyleDicKey: EnvironmentKey {
@@ -50,25 +57,25 @@ public struct CalendarViewFormatStyleDicKey: EnvironmentKey {
 }
 
 public struct CalendarViewFontDicKey: EnvironmentKey {
-    public typealias Value = DictionaryWithDefault<String, Font>
+    public typealias Value = DictionaryWithDefault<CalendarDicKey, Font>
     // key: "TimeColumn", "DayLabel", "NowLine", "2023/01/12", "DayEvent"
     static public var defaultValue: Value = .init(defaultValue: .body)
 }
 
 public struct CalendarViewWidthDicKey: EnvironmentKey {
     // key might be "TimeColumn" or "2023/01/23"
-    public typealias Value = [String: CGFloat]
+    public typealias Value = [CalendarDicKey: CGFloat]
     static public var defaultValue: Value = [:]
 }
 
 public struct CalendarViewHeightDicKey: EnvironmentKey {
     // key might be "HourBlock", "DayEvent"
-    public typealias Value = DictionaryWithDefault<String, CGFloat>
+    public typealias Value = DictionaryWithDefault<CalendarDicKey, CGFloat>
     static public var defaultValue: Value = .init(defaultValue: 50)
 }
 
 public struct CalendarViewAlignmentDicKey: EnvironmentKey {
-    public typealias Value = DictionaryWithDefault<String, Alignment>
+    public typealias Value = DictionaryWithDefault<CalendarDicKey, Alignment>
     // key: "TimeColumn", "DayLabel"
     static public var defaultValue: Value = .init(defaultValue: .center)
 }
@@ -83,7 +90,7 @@ extension EnvironmentValues {
         }
     }
 
-    public var calendarViewFontDic: DictionaryWithDefault<String, Font> {
+    public var calendarViewFontDic: DictionaryWithDefault<CalendarDicKey, Font> {
         get {
             self[CalendarViewFontDicKey.self]
         }
@@ -92,7 +99,7 @@ extension EnvironmentValues {
         }
     }
 
-    public var calendarViewWidthDic: [String: CGFloat] {
+    public var calendarViewWidthDic: [CalendarDicKey: CGFloat] {
         get {
             self[CalendarViewWidthDicKey.self]
         }
@@ -101,7 +108,7 @@ extension EnvironmentValues {
         }
     }
 
-    public var calendarViewHeightDic: DictionaryWithDefault<String, CGFloat> {
+    public var calendarViewHeightDic: DictionaryWithDefault<CalendarDicKey, CGFloat> {
         get {
             self[CalendarViewHeightDicKey.self]
         }
@@ -109,7 +116,7 @@ extension EnvironmentValues {
             self[CalendarViewHeightDicKey.self] = newValue
         }
     }
-    public var calendarViewAlignmentDic: DictionaryWithDefault<String, Alignment> {
+    public var calendarViewAlignmentDic: DictionaryWithDefault<CalendarDicKey, Alignment> {
         get {
             self[CalendarViewAlignmentDicKey.self]
         }
