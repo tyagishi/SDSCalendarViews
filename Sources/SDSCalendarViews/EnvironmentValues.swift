@@ -1,5 +1,5 @@
 //
-//  EnvironmentVariables.swift
+//  EnvironmentValues.swift
 //
 //  Created by : Tomoaki Yagishita on 2023/04/01
 //  © 2023  SmallDeskSoftware
@@ -23,7 +23,16 @@ extension View {
     public func calendarViewAlignmentDic(_ alignmentDic: DictionaryWithDefault<String, Alignment>) -> some View {
         self.environment(\.calendarViewAlignmentDic, alignmentDic)
     }
+    public func calendarViewFormatStyleDic(_ formatStyleDic: [String: Date.FormatStyle]) -> some View {
+        self.environment(\.calendarViewFormatStyleDic, formatStyleDic)
+    }
+}
 
+public enum CalendarFormatStyleKey: String, RawRepresentable {
+    case leadDayLabel = "LeadDayLabel"
+    case restDaysLabel = "RestDaysLabel"
+    case todayLabel = "TodayLLabel"
+    case timeLabel = "TimeLabel"
 }
 
 public enum CalendarDicKey: String, RawRepresentable {
@@ -32,6 +41,12 @@ public enum CalendarDicKey: String, RawRepresentable {
     case nowLine = "NowLine"       // for font
     case hourBlock = "HourBlock"   // for height
     case dayEvent = "DayEvent"     // for font, height, alignment
+}
+
+public struct CalendarViewFormatStyleDicKey: EnvironmentKey {
+    public typealias Value = [String: Date.FormatStyle]
+    // key: "TimeColumn", "DayLabel", "NowLine", "2023/01/12", "DayEvent"
+    static public var defaultValue: Value = [:]
 }
 
 public struct CalendarViewFontDicKey: EnvironmentKey {
@@ -59,6 +74,15 @@ public struct CalendarViewAlignmentDicKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
+    public var calendarViewFormatStyleDic: [String: Date.FormatStyle] {
+        get {
+            self[CalendarViewFormatStyleDicKey.self]
+        }
+        set {
+            self[CalendarViewFormatStyleDicKey.self] = newValue
+        }
+    }
+
     public var calendarViewFontDic: DictionaryWithDefault<String, Font> {
         get {
             self[CalendarViewFontDicKey.self]
