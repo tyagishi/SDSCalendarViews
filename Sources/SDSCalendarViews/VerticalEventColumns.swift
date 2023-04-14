@@ -31,13 +31,13 @@ public struct VerticalEventColumns: View {
                     .frame(width: widthDic[CalendarViewModel.key(for: date)])
             }
         }
-        .overlay {
+        .overlay(alignment: .topLeading) {
             NowTextLine(now: now)
                 .offset(y: offsetY(now: now, oneHourHeight: heightDic["HourBlock"]))
         }
     }
     func offsetY(now: Date, oneHourHeight: CGFloat) -> CGFloat {
-        let diffInTime = now.timeIntervalSinceReferenceDate - viewModel.midDate(now).timeIntervalSinceReferenceDate
+        let diffInTime = now.timeIntervalSinceReferenceDate - viewModel.startDate(now).timeIntervalSinceReferenceDate
         let diffInDot = diffInTime / CalendarViewModel.secInHour * oneHourHeight
         return diffInDot// - oneHourHeight * 0.5
     }

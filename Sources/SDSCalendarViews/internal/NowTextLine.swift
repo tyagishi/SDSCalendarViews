@@ -19,7 +19,8 @@ struct NowTextLine: View {
         HStack(spacing: 0) {
             Text(CalendarViewModel.formattedTime(now))
                 .font(fontDic[nlKey])
-                .minimumScaleFactor(0.1)
+                .minimumScaleFactor(0.01)
+                .lineLimit(1)
                 .foregroundColor(.red)
                 .padding(.horizontal, 3)
                 .frame(maxWidth: .infinity, alignment: .trailing)
