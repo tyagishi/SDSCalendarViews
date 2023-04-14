@@ -8,21 +8,37 @@
 import Foundation
 import SwiftUI
 
-public struct EventColumnHeader<T: View>: View {
+public struct EventColumnHeader: View {
     @Environment(\.calendarViewFontDic) var fontDic
     @Environment(\.calendarViewWidthDic) var widthDic
     @Environment(\.calendarViewHeightDic) var heightDic
     @Environment(\.calendarViewAlignmentDic) var alignmentDic
+    @Environment(\.calendarViewFormatStyleDic) var formatStyleDic
 
     let date: Date
-    let label: T
+    let firstDayFlag: Bool
+    let todayFlag: Bool
 
-    public init(date: Date, label: () -> T) {
+    public init(date: Date, range: Range<Date>? = nil, today: Date? = nil) {
         self.date = date
-        self.label = label()
+        if let range = range,
+           Calendar.current.isDate(date, inSameDayAs: range.lowerBound) {
+            firstDayFlag = true
+        } else {
+            firstDayFlag = false
+        }
+        if let today = today,
+           Calendar.current.isDate(date, inSameDayAs: today) {
+            todayFlag = true
+        } else {
+            todayFlag = false
+        }
     }
     public var body: some View {
-        label.font(fontDic[CalendarViewModel.formattedDate(date)])
+//        let text = date.formatted(formatStyleDic[.])
+        let formatStyle = formatStyleDic[firstDayFlag ? .leadDayLabel : .restDaysLabel] ??  .dateTime.month(.twoDigits).day(.twoDigits)
+        let text = date.formatted(formatStyle)
+        Text(text).font(fontDic[CalendarViewModel.formattedDate(date)])
             .minimumScaleFactor(0.1)
             .lineLimit(1)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic["DayLabel"])

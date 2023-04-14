@@ -33,8 +33,7 @@ public struct VerticalDaysView: View {
             ForEach(viewModel.eachDayRange(dayRange), id: \.self) { date in
                 Divider().foregroundColor(.white)
                 VStack(spacing: 0) {
-                    EventColumnHeader(date: date,
-                                      label: { Text( date.formatted(.dateTime.month(.twoDigits).day(.twoDigits))) })
+                    EventColumnHeader(date: date, range: dayRange, today: now)
                     DayEventBlock(viewModel, date: date)
                     EventColumn(viewModel: viewModel, date: date)
                 }

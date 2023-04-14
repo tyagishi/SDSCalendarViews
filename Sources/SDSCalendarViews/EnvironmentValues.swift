@@ -23,7 +23,7 @@ extension View {
     public func calendarViewAlignmentDic(_ alignmentDic: DictionaryWithDefault<String, Alignment>) -> some View {
         self.environment(\.calendarViewAlignmentDic, alignmentDic)
     }
-    public func calendarViewFormatStyleDic(_ formatStyleDic: [String: Date.FormatStyle]) -> some View {
+    public func calendarViewFormatStyleDic(_ formatStyleDic: [CalendarFormatStyleKey: Date.FormatStyle]) -> some View {
         self.environment(\.calendarViewFormatStyleDic, formatStyleDic)
     }
 }
@@ -44,7 +44,7 @@ public enum CalendarDicKey: String, RawRepresentable {
 }
 
 public struct CalendarViewFormatStyleDicKey: EnvironmentKey {
-    public typealias Value = [String: Date.FormatStyle]
+    public typealias Value = [CalendarFormatStyleKey: Date.FormatStyle]
     // key: "TimeColumn", "DayLabel", "NowLine", "2023/01/12", "DayEvent"
     static public var defaultValue: Value = [:]
 }
@@ -74,7 +74,7 @@ public struct CalendarViewAlignmentDicKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    public var calendarViewFormatStyleDic: [String: Date.FormatStyle] {
+    public var calendarViewFormatStyleDic: [CalendarFormatStyleKey: Date.FormatStyle] {
         get {
             self[CalendarViewFormatStyleDicKey.self]
         }

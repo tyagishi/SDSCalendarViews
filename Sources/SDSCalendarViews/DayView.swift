@@ -31,10 +31,7 @@ public struct DayView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 TimeColumnLabel()
-                EventColumnHeader(date: date,
-                                  label: { Text(date.formatted(.dateTime.month(.twoDigits).day(.twoDigits)))
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignmentDic[dayLabelKey])
-                })
+                EventColumnHeader(date: date, today: now)
             }
             HStack(spacing: 0) {
                 TimeColumnEventLabel()

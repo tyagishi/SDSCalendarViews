@@ -31,7 +31,7 @@ public struct ScrollableVerticalDaysView: View {
 //                    Divider()
                     Divider().frame(height: heightDic[dayLabelKey] + heightDic[eventBlockKey])
                     VStack(spacing: 0) {
-                        EventColumnHeader(date: date, label: { Text(CalendarViewModel.formattedMMDD(date)) })
+                        EventColumnHeader(date: date, range: dayRange, today: now)
                         Divider()
                         DayEventBlock(viewModel, date: date)
                     }
