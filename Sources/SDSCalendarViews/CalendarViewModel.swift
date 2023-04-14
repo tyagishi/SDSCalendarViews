@@ -189,7 +189,24 @@ extension CalendarViewModel {
 // MARK: convenient method for Range<Date>
 extension CalendarViewModel {
     static public func oneWeekFrom(_ date: Date) -> Range<Date> {
-        Date()..<(Date().advanced(by: CalendarViewModel.secInDay * 7))
+        dateRange(date, 0, 6)
+    }
+
+//    static public func oneWeekFromSunday(_ date: Date) -> Range<Date> {
+//        // 1: Sunday ... 7: Saturday
+//        let weekday = Calendar.current.component(.weekday, from: date)
+//        let startOffset = 1 - weekday
+//        let endOffset = startOffset + 6
+//        return dateRange(date, startOffset, endOffset)
+//    }
+
+    static public func oneWeek(from date: Date, start: Int) -> Range<Date> {
+        // 1: Sunday ... 7: Saturday
+        let weekday = Calendar.current.component(.weekday, from: date)
+        var startOffset = start - weekday
+        if startOffset > 0 { startOffset -= 7 }
+        let endOffset = startOffset + 6
+        return dateRange(date, startOffset, endOffset)
     }
 
     /// generate Range<Date> from given info
