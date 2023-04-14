@@ -40,14 +40,15 @@ public struct VerticalDaysView: View {
                 }
             }
         }
-        .overlay {
+        .overlay(alignment: .top) {
             NowTextLine(now: now)
                 .offset(y: offsetY(now: now, oneHourHeight: heightDic["HourBlock"]))
         }
     }
     func offsetY(now: Date, oneHourHeight: CGFloat) -> CGFloat {
-        let diffInTime = now.timeIntervalSinceReferenceDate - viewModel.midDate(now).timeIntervalSinceReferenceDate
-        let diffInDot = diffInTime / CalendarViewModel.secInHour * oneHourHeight
+        let diffInTime = now.timeIntervalSinceReferenceDate - viewModel.startDate(now).timeIntervalSinceReferenceDate
+        let diffInDot = diffInTime / CalendarViewModel.secInHour * oneHourHeight + heightDic[CalendarDicKey.dayLabel.rawValue]
+        + heightDic[CalendarDicKey.dayEvent.rawValue]
         return diffInDot// - oneHourHeight * 0.5
     }
 
