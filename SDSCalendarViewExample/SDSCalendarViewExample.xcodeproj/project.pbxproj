@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		36039D9B291BA1E200A4EB7A /* SDSCalendarViews in Frameworks */ = {isa = PBXBuildFile; productRef = 36039D9A291BA1E200A4EB7A /* SDSCalendarViews */; };
 		361309852962B07D00721674 /* DayViewExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361309842962B07D00721674 /* DayViewExample.swift */; };
 		3629E13629644453005F6BED /* VerticalDaysViewExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3629E13529644453005F6BED /* VerticalDaysViewExample.swift */; };
+		3630BA5B2C69C1E000992052 /* SDSCalendarViews in Frameworks */ = {isa = PBXBuildFile; productRef = 3630BA5A2C69C1E000992052 /* SDSCalendarViews */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3630BA5B2C69C1E000992052 /* SDSCalendarViews in Frameworks */,
 				36039D9B291BA1E200A4EB7A /* SDSCalendarViews in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,6 +115,7 @@
 			name = SDSCalendarViewExample;
 			packageProductDependencies = (
 				36039D9A291BA1E200A4EB7A /* SDSCalendarViews */,
+				3630BA5A2C69C1E000992052 /* SDSCalendarViews */,
 			);
 			productName = SDSCalendarViewExample;
 			productReference = 36039D85291BA19C00A4EB7A /* SDSCalendarViewExample.app */;
@@ -142,6 +145,9 @@
 				Base,
 			);
 			mainGroup = 36039D7C291BA19C00A4EB7A;
+			packageReferences = (
+				3630BA592C69C1E000992052 /* XCLocalSwiftPackageReference "../../SDSCalendarViews" */,
+			);
 			productRefGroup = 36039D86291BA19C00A4EB7A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -386,8 +392,19 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		3630BA592C69C1E000992052 /* XCLocalSwiftPackageReference "../../SDSCalendarViews" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../SDSCalendarViews;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		36039D9A291BA1E200A4EB7A /* SDSCalendarViews */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SDSCalendarViews;
+		};
+		3630BA5A2C69C1E000992052 /* SDSCalendarViews */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SDSCalendarViews;
 		};
